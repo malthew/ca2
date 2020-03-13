@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import utils.EMF_Creator;
 
 /**
  *
@@ -46,6 +47,16 @@ public class FacadeExample {
             em.close();
         }
         
+    }
+    
+    public static void main(String[] args) {
+        emf = EMF_Creator.createEntityManagerFactory(
+                "pu",
+                "jdbc:mysql://localhost:3307/startcode_test",
+                "dev",
+                "ax2",
+                EMF_Creator.Strategy.CREATE);
+        //Persistence.generateSchema("custom", null);
     }
 
 }
