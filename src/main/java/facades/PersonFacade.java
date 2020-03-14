@@ -20,4 +20,6 @@ public class PersonFacade {
     private EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
+    
+    
 }

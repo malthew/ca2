@@ -14,6 +14,7 @@ public class PersonDTO {
     private Address address;
     private List<Hobby> hobbies;
 
+    //Constructor for making personDTOs with data from the DB
     public PersonDTO(Person person) {
         this.email = person.getEmail();
         this.firstName = person.getFirstName();
@@ -22,6 +23,18 @@ public class PersonDTO {
         this.address = person.getAddress();
         this.hobbies = person.getHobbys();
     }
+    
+    //Constructor for making PersonDTOs with data from a POST
+    public PersonDTO(String email, String firstName, String lastName, List<Phone> phones, Address address, List<Hobby> hobbies) {
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phones = phones;
+        this.address = address;
+        this.hobbies = hobbies;
+    }
+    
+    
 
     public String getEmail() {
         return email;
