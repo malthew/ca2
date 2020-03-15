@@ -21,11 +21,15 @@ public class HobbyDTO {
     }
     
     //Constructor for making PersonDTOs with data from a POST
-    public HobbyDTO(String name, String description, List<PersonDTO> persons) {
+    public HobbyDTO(String name, String description) {
         this.name = name;
         this.description = description;
-        this.persons = persons;
     }
+
+    public HobbyDTO() {
+    }
+    
+    
 
     public String getName() {
         return name;
@@ -50,4 +54,11 @@ public class HobbyDTO {
     public void setPersons(List<PersonDTO> persons) {
         this.persons = persons;
     }
+
+    @Override
+    public String toString() {
+        return "HobbyDTO{" + "name=" + name + ", description=" + '}';
+    }
+    
+    
 }

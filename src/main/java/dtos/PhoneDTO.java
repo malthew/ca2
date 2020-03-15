@@ -16,12 +16,13 @@ public class PhoneDTO {
     }
     
     //Constructor for making PersonDTOs with data from a POST
-    public PhoneDTO(int number, String description, PersonDTO person) {
+    public PhoneDTO(int number, String description) {
         this.number = number;
         this.description = description;
-        this.person = person;
     }
-    
+
+    public PhoneDTO() {
+    }
 
     public PersonDTO getPerson() {
         return person;
@@ -47,6 +48,12 @@ public class PhoneDTO {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    @Override
+    public String toString() {
+        return "PhoneDTO{" + "number=" + number + ", description=" + description + ", person=" + person + '}';
+    }
+    
     
     
 }

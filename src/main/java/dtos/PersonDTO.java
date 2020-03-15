@@ -4,38 +4,29 @@ import entities.Address;
 import entities.Hobby;
 import entities.Person;
 import entities.Phone;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PersonDTO {
+    private int personid;
     private String email;
     private String firstName;
     private String lastName;
-    private List<Phone> phones;
-    private Address address;
-    private List<Hobby> hobbies;
+    private List<PhoneDTO> phones;
+    private AddressDTO address;
+    private List<HobbyDTO> hobbies;
 
     //Constructor for making personDTOs with data from the DB
     public PersonDTO(Person person) {
+        this.personid = person.getPersonid();
         this.email = person.getEmail();
         this.firstName = person.getFirstName();
         this.lastName = person.getLastName();
-        this.phones = person.getPhones();
-        this.address = person.getAddress();
-        this.hobbies = person.getHobbys();
     }
-    
-    //Constructor for making PersonDTOs with data from a POST
-    public PersonDTO(String email, String firstName, String lastName, List<Phone> phones, Address address, List<Hobby> hobbies) {
-        this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.phones = phones;
-        this.address = address;
-        this.hobbies = hobbies;
-    }
-    
-    
 
+    public PersonDTO() {
+    }
+    
     public String getEmail() {
         return email;
     }
@@ -60,28 +51,37 @@ public class PersonDTO {
         this.lastName = lastName;
     }
 
-    public List<Phone> getPhones() {
+    public List<PhoneDTO> getPhones() {
         return phones;
     }
 
-    public void setPhones(List<Phone> phones) {
+    public void setPhones(List<PhoneDTO> phones) {
         this.phones = phones;
     }
 
-    public Address getAddress() {
+    public AddressDTO getAddress() {
         return address;
     }
 
-    public void setAddress(Address address) {
+    public void setAddress(AddressDTO address) {
         this.address = address;
     }
 
-    public List<Hobby> getHobbies() {
+    public List<HobbyDTO> getHobbies() {
         return hobbies;
     }
 
-    public void setHobbies(List<Hobby> hobbies) {
+    public void setHobbies(List<HobbyDTO> hobbies) {
         this.hobbies = hobbies;
     }
+
+    @Override
+    public String toString() {
+        return "PersonDTO{" + "email=" + email + ", firstName=" + firstName + ", lastName=" + lastName + '}';
+    }
+    
+    
+ 
+    
     
 }

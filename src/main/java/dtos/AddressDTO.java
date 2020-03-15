@@ -19,17 +19,15 @@ public class AddressDTO {
     public AddressDTO(Address address) {
         this.street = address.getStreet();
         this.additionalInfo = address.getAdditionalInfo();
-        this.persons = new ArrayList<>();
-        for (Person person : address.getPersons()) {
-            persons.add(new PersonDTO(person));
-        }
     }
     
     //Constructor for making addressDTOs with data from a POST
-    public AddressDTO(String street, String additionalInfo, List<PersonDTO> persons) {
+    public AddressDTO(String street, String additionalInfo) {
         this.street = street;
         this.additionalInfo = additionalInfo;
-        this.persons = persons;
+    }
+
+    public AddressDTO() {
     }
     
     
@@ -57,4 +55,11 @@ public class AddressDTO {
     public void setPersons(List<PersonDTO> persons) {
         this.persons = persons;
     }
+
+    @Override
+    public String toString() {
+        return "AddressDTO{" + "street=" + street + ", additionalInfo=" + additionalInfo + ", persons=" + persons + '}';
+    }
+    
+    
 }
