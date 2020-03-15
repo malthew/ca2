@@ -13,10 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import utils.EMF_Creator;
 
-public class Facade implements FacadeInterface{
+public class Facade implements FacadeInterface {
 
     private static Facade instance;
     private static EntityManagerFactory emf;
@@ -45,9 +46,6 @@ public class Facade implements FacadeInterface{
                     .setParameter("lastName", lastName);
 
             Person personToEdit = q.getSingleResult();
-            if (personToEdit == null) {
-                throw new PersonNotFoundException("Person with given name could not be found");
-            }
 
             List<Phone> phones = personToEdit.getPhones();
 
@@ -61,8 +59,18 @@ public class Facade implements FacadeInterface{
             em.getTransaction().begin();
             em.merge(personToEdit);
             em.getTransaction().commit();
-
-            return new PersonDTO(personToEdit);
+            
+            //making a list of phoneDTO's for the PersonDTO to have
+            PersonDTO pDTO = new PersonDTO(personToEdit);
+            List<PhoneDTO> phonedtos = new ArrayList<>();
+            for (Phone phone : personToEdit.getPhones()) {
+                phonedtos.add(new PhoneDTO(phone));
+            }
+            
+            pDTO.setPhones(phonedtos);
+            return pDTO;
+            } catch (NoResultException ex) {
+            throw new PersonNotFoundException("Person with given name could not be found");
         } finally {
             em.close();
         }
@@ -77,9 +85,6 @@ public class Facade implements FacadeInterface{
                     .setParameter("lastName", lastName);
 
             Person personToEdit = q.getSingleResult();
-            if (personToEdit == null) {
-                throw new PersonNotFoundException("Person with given name could not be found");
-            }
 
             List<Hobby> hobbies = personToEdit.getHobbys();
 
@@ -93,8 +98,18 @@ public class Facade implements FacadeInterface{
             em.getTransaction().begin();
             em.merge(personToEdit);
             em.getTransaction().commit();
-
-            return new PersonDTO(personToEdit);
+            
+            //making a list of hobbyDTO's for the PersonDTO to have
+            PersonDTO pDTO = new PersonDTO(personToEdit);
+            List<HobbyDTO> hobbydtos = new ArrayList<>();
+            for (Hobby hobby : personToEdit.getHobbys()) {
+                hobbydtos.add(new HobbyDTO(hobby));
+            }
+            
+            pDTO.setHobbies(hobbydtos);
+            return pDTO;
+            } catch (NoResultException ex) {
+            throw new PersonNotFoundException("Person with given name could not be found");
         } finally {
             em.close();
         }
@@ -109,9 +124,6 @@ public class Facade implements FacadeInterface{
                     .setParameter("lastName", lastName);
 
             Person person = q.getSingleResult();
-            if (person == null) {
-                throw new PersonNotFoundException("Person with given name could not be found");
-            }
 
             List<Phone> phones = person.getPhones();
             List<PhoneDTO> phonedtos = new ArrayList<>();
@@ -120,11 +132,13 @@ public class Facade implements FacadeInterface{
             }
 
             return phonedtos;
+        } catch (NoResultException ex) {
+            throw new PersonNotFoundException("Person with given name could not be found");
         } finally {
             em.close();
         }
     }
-    
+
     public void createPerson(PersonDTO person) {
         EntityManager em = emf.createEntityManager();
         try {
@@ -135,10 +149,10 @@ public class Facade implements FacadeInterface{
             em.close();
         }
     }
-    
+
     // Not done 
     public void createPersonWithInformations(PersonDTO person, AddressDTO address, List<HobbyDTO> hobby, List<PhoneDTO> phone) {
-    //public void createPersonWithInformations(PersonDTO person) {
+        //public void createPersonWithInformations(PersonDTO person) {
         EntityManager em = emf.createEntityManager();
         try {
             em.getTransaction().begin();
@@ -162,22 +176,20 @@ public class Facade implements FacadeInterface{
             em.close();
         }
     }
-    
+
     @Override
     public long countOfPeopleWithHobby(String hobby) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
 
     private long countFromHobby(String hobby) {
         EntityManager em = emf.createEntityManager();
         try {
-            long count = (long)em.createQuery("SELECT COUNT(h) FROM Hobby h WHERE h.name = :hobby").setParameter("hobby", hobby).getSingleResult();
+            long count = (long) em.createQuery("SELECT COUNT(h) FROM Hobby h WHERE h.name = :hobby").setParameter("hobby", hobby).getSingleResult();
             return count;
         } finally {
             em.close();
         }
     }
-
 
 }
