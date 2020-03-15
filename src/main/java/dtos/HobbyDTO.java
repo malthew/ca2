@@ -14,10 +14,6 @@ public class HobbyDTO {
     public HobbyDTO(Hobby hobby) {
         this.name = hobby.getName();
         this.description = hobby.getDescription();
-        this.persons = new ArrayList<>();
-        for (Person person : hobby.getPersons()) {
-            this.persons.add(new PersonDTO(person));
-        }
     }
     
     //Constructor for making PersonDTOs with data from a POST
