@@ -7,9 +7,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 
 
 @Entity
+@NamedQuery(name = "Phone.deleteAllRows", query = "DELETE from Phone")
 public class Phone implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -20,8 +22,8 @@ public class Phone implements Serializable {
     private String description;
     @ManyToOne(cascade = CascadeType.PERSIST)
     private Person person;
-    
-    
+
+
     public Phone() {
     }
 
@@ -32,6 +34,10 @@ public class Phone implements Serializable {
 
     public Person getPerson() {
         return person;
+    }
+    
+        public void setPerson(Person person) {
+        this.person = person;
     }
     
     public Long getId() {

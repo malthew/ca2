@@ -24,7 +24,7 @@ public class Facade implements FacadeInterface{
     private Facade() {
     }
 
-    public static Facade getPersonFacade(EntityManagerFactory _emf) {
+    public static Facade getFacade(EntityManagerFactory _emf) {
         if (instance == null) {
             emf = _emf;
             instance = new Facade();
@@ -36,7 +36,7 @@ public class Facade implements FacadeInterface{
         return emf.createEntityManager();
     }
 
-    private PersonDTO editPersonPhone(String firstName, String lastName, int oldNumber, int newNumber, String newDescription) throws PersonNotFoundException {
+    public PersonDTO editPersonPhone(String firstName, String lastName, int oldNumber, int newNumber, String newDescription) throws PersonNotFoundException {
         EntityManager em = emf.createEntityManager();
         try {
             TypedQuery<Person> q = em.createQuery("SELECT p FROM Person p WHERE "
@@ -68,7 +68,7 @@ public class Facade implements FacadeInterface{
         }
     }
 
-    private PersonDTO editPersonHobby(String firstName, String lastName, String oldHobbyName, String newHobbyName, String newDescription) throws PersonNotFoundException {
+    public PersonDTO editPersonHobby(String firstName, String lastName, String oldHobbyName, String newHobbyName, String newDescription) throws PersonNotFoundException {
         EntityManager em = emf.createEntityManager();
         try {
             TypedQuery<Person> q = em.createQuery("SELECT p FROM Person p WHERE "
@@ -100,7 +100,7 @@ public class Facade implements FacadeInterface{
         }
     }
 
-    private List<PhoneDTO> getPhonesFromPerson(String firstName, String lastName) throws PersonNotFoundException {
+    public List<PhoneDTO> getPhonesFromPerson(String firstName, String lastName) throws PersonNotFoundException {
         EntityManager em = emf.createEntityManager();
         try {
             TypedQuery<Person> q = em.createQuery("SELECT p FROM Person p WHERE "

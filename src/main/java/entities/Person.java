@@ -10,10 +10,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 
 
 @Entity
+@NamedQuery(name = "Person.deleteAllRows", query = "DELETE from Person")
 public class Person implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -26,11 +28,12 @@ public class Person implements Serializable {
     private String lastName;
     @OneToMany(mappedBy = "person" ,
             cascade = CascadeType.PERSIST)
-    private List<Phone> phones;
+    private List<Phone> phones = new ArrayList<>();
     @ManyToOne
     private Address address;
-    @ManyToMany(mappedBy = "persons")
-    private List<Hobby> hobbys;
+    @ManyToMany(mappedBy = "persons" ,
+            cascade = CascadeType.PERSIST)
+    private List<Hobby> hobbys = new ArrayList<>();
     
     
 
@@ -59,6 +62,10 @@ public class Person implements Serializable {
     public void setPhones(List<Phone> phones) {
         this.phones = phones;
     }
+    
+    public void addPhone(Phone phone){
+        this.phones.add(phone);
+    }
 
     public void setAddress(Address address) {
         this.address = address;
@@ -66,6 +73,10 @@ public class Person implements Serializable {
 
     public void setHobbys(List<Hobby> hobbys) {
         this.hobbys = hobbys;
+    }
+    
+    public void addHobby(Hobby hobby){
+        this.hobbys.add(hobby);
     }
     
     public Long getId() {

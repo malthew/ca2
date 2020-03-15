@@ -1,15 +1,19 @@
 package entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 
 
 @Entity
+@NamedQuery(name = "CityInfo.deleteAllRows", query = "DELETE from CityInfo")
 public class CityInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -18,8 +22,8 @@ public class CityInfo implements Serializable {
     private Long id;
     private int zipCode;
     private String city;
-    @OneToMany
-    private List<Address> addresses;
+    @OneToMany (cascade = CascadeType.PERSIST)
+    private List<Address> addresses = new ArrayList<>();
 
     public CityInfo() {
     }
@@ -37,8 +41,10 @@ public class CityInfo implements Serializable {
         this.addresses = addresses;
     }
     
+    public void addAddress(Address address){
+        this.addresses.add(address);
+    }
     
-
     public Long getId() {
         return id;
     }

@@ -7,9 +7,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.NamedQuery;
 
 
 @Entity
+@NamedQuery(name = "Hobby.deleteAllRows", query = "DELETE from Hobby")
 public class Hobby implements Serializable {
 
     private static final long serialVersionUID = 1L;
