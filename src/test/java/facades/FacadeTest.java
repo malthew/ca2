@@ -1,7 +1,5 @@
 package facades;
 
-import dtos.CityInfoDTO;
-import dtos.HobbyDTO;
 import dtos.PersonDTO;
 import dtos.PhoneDTO;
 import entities.Address;
@@ -9,6 +7,7 @@ import entities.CityInfo;
 import entities.Hobby;
 import entities.Person;
 import entities.Phone;
+import entities.RenameMe;
 import exceptions.PersonNotFoundException;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -16,7 +15,6 @@ import javax.persistence.EntityManagerFactory;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -158,34 +156,6 @@ public class FacadeTest {
         String newDescription = "new hobby";
         PersonDTO p = facade.editPersonHobby(firstName, lastName, oldHobbyName, newHobbyName, newDescription);
         assertTrue(p.getHobbies().stream().anyMatch(hobbyDTO -> hobbyDTO.getName().equals("Løbe")));
-    }
-    
-    @Test
-    public void testAddHobby()  {
-        assertEquals(0, facade.countFromHobby("Fodbold"));
-        facade.addHobby(new HobbyDTO("Fodbold", "Amatør fodbold"));
-        assertEquals(1, facade.countFromHobby("Fodbold"));
-    }
-    
-    @Test
-    public void testCountFromHobby()  {
-        assertEquals(2, facade.countFromHobby("Film"));
-    }
-    
-    @Test
-    public void testAddCityAndGet()  {
-        CityInfo city = new CityInfo(2820, "Gentofte");
-        facade.addCity(new CityInfoDTO(city));
-        //As already 2 citys are created in @BeforeEach there should now be 3
-        assertThat(facade.getAllZipCodes(), hasSize(3));
-    }
-    
-    @Test
-    public void testCreatePersonWithNoExtraVal()  {
-        Person persons = new Person(30, "email@email.com", "John", "Doe");
-        facade.createPerson(new PersonDTO(persons));
-        List<PersonDTO> list = facade.findPerson("John");
-        assertTrue(list.get(0).getFirstName().equals("John"));
     }
 
 }

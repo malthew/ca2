@@ -1,12 +1,10 @@
 package facades;
 
 import dtos.AddressDTO;
-import dtos.CityInfoDTO;
 import dtos.HobbyDTO;
 import dtos.PersonDTO;
 import dtos.PhoneDTO;
 import entities.Address;
-import entities.CityInfo;
 import entities.Hobby;
 import entities.Person;
 import entities.Phone;
@@ -141,37 +139,12 @@ public class Facade implements FacadeInterface {
         }
     }
 
-    
     public void createPerson(PersonDTO person) {
         EntityManager em = emf.createEntityManager();
-        Person entperson = new Person();
-        entperson.setPersonid(person.getPersonid());
-        entperson.setEmail(person.getEmail());
-        entperson.setFirstName(person.getFirstName());
-        entperson.setLastName(person.getLastName());
         try {
             em.getTransaction().begin();
-            em.persist(entperson);
+            em.persist(person);
             em.getTransaction().commit();
-        } finally {
-            em.close();
-        }
-    }
-    
-    public List<PersonDTO> findPerson(String firstName) {
-        EntityManager em = emf.createEntityManager();
-        //Person person;
-        try {
-            em.getTransaction().begin();
-           TypedQuery<Person> query = em.createQuery("SELECT p FROM Person p WHERE "
-                    + "p.firstName = :firstName", Person.class)
-                    .setParameter("firstName", firstName);
-            em.getTransaction().commit();
-            List<PersonDTO> list = new ArrayList();
-            for (Person person : query.getResultList()) {
-                list.add(new PersonDTO(person));
-            }
-            return list;
         } finally {
             em.close();
         }
@@ -179,6 +152,7 @@ public class Facade implements FacadeInterface {
 
     // Not done 
     public void createPersonWithInformations(PersonDTO person, AddressDTO address, List<HobbyDTO> hobby, List<PhoneDTO> phone) {
+        //public void createPersonWithInformations(PersonDTO person) {
         EntityManager em = emf.createEntityManager();
         try {
             em.getTransaction().begin();
@@ -192,21 +166,23 @@ public class Facade implements FacadeInterface {
         }
     }
 
-    public void addHobby(HobbyDTO hobby) {
+    protected void addHobby(Hobby hobby) {
         EntityManager em = emf.createEntityManager();
-        Hobby enthobby = new Hobby();
-        enthobby.setName(hobby.getName());
-        enthobby.setDescription(hobby.getDescription());
         try {
             em.getTransaction().begin();
-            em.persist(enthobby);
+            em.persist(hobby);
             em.getTransaction().commit();
         } finally {
             em.close();
         }
     }
 
-    public long countFromHobby(String hobby) {
+    @Override
+    public long countOfPeopleWithHobby(String hobby) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private long countFromHobby(String hobby) {
         EntityManager em = emf.createEntityManager();
         try {
             long count = (long) em.createQuery("SELECT COUNT(h) FROM Hobby h WHERE h.name = :hobby").setParameter("hobby", hobby).getSingleResult();
@@ -215,30 +191,5 @@ public class Facade implements FacadeInterface {
             em.close();
         }
     }
-    
-    public void addCity(CityInfoDTO city) {
-        EntityManager em = emf.createEntityManager();
-        CityInfo entcity = new CityInfo();
-        entcity.setZipCode(city.getZipCode());
-        entcity.setCity(city.getCity());
-        try {
-            em.getTransaction().begin();
-            em.persist(entcity);
-            em.getTransaction().commit();
-        } finally {
-            em.close();
-        }
-    }
-    
-    public List<CityInfoDTO> getAllZipCodes() {
-        EntityManager em = emf.createEntityManager();
-        try {
-            List<CityInfoDTO> list =  em.createQuery("SELECT c FROM CityInfo c").getResultList();
-            return list;
-        } finally {
-            em.close();
-        }
-    }
-    
 
 }

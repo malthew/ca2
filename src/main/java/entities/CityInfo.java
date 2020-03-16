@@ -69,11 +69,6 @@ public class CityInfo implements Serializable {
         this.city = city;
     }
 
-    @Override
-    public String toString() {
-        return "CityInfo{" + "id=" + id + ", zipCode=" + zipCode + ", city=" + city + ", addresses=" + addresses + '}';
-    }
-
     
     
 }

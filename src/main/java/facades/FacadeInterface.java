@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface FacadeInterface {
     
-    
+    public long countOfPeopleWithHobby(String hobby);
     
 }

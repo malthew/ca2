@@ -14,6 +14,10 @@ public class CityInfoDTO {
     public CityInfoDTO(CityInfo cityInfo) {
         this.zipCode = cityInfo.getZipCode();
         this.city = cityInfo.getCity();
+        this.addresses = new ArrayList<>();
+        for (Address address : cityInfo.getAddresses()) {
+            this.addresses.add(new AddressDTO(address));
+        }
     }
     
     //Constructor for making PersonDTOs with data from a POST
@@ -46,11 +50,4 @@ public class CityInfoDTO {
     public void setAddresses(List<AddressDTO> addresses) {
         this.addresses = addresses;
     }
-
-    @Override
-    public String toString() {
-        return "CityInfoDTO{" + "zipCode=" + zipCode + ", city=" + city + ", addresses=" + addresses + '}';
-    }
-    
-    
 }
