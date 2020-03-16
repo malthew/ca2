@@ -83,6 +83,16 @@ public class Person implements Serializable {
         this.hobbys.add(hobby);
     }
     
+    public void removeHobby(Hobby hobby){
+        Hobby hobbyToBeRemoved = null;
+        for (Hobby hobby_ : this.hobbys){
+            if (hobby.getName().equals(hobby_.getName())){
+                hobbyToBeRemoved = hobby_;
+            }
+        }
+        if (hobbyToBeRemoved != null)  this.hobbys.remove(hobbyToBeRemoved);              
+    }
+    
     public Long getId() {
         return id;
     }

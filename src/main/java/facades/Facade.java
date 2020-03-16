@@ -16,6 +16,8 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
+import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 import utils.EMF_Creator;
 
@@ -73,7 +75,10 @@ public class Facade implements FacadeInterface {
             return pDTO;
         } catch (NoResultException ex) {
             throw new PersonNotFoundException("Person with given name could not be found");
-        } finally {
+        } catch (NonUniqueResultException ex) {
+            throw new PersonNotFoundException("Multiple people with same name and last name found, cannot proceed with editing");
+        }
+        finally {
             em.close();
         }
     }
@@ -89,14 +94,20 @@ public class Facade implements FacadeInterface {
             Person personToEdit = q.getSingleResult();
 
             List<Hobby> hobbies = personToEdit.getHobbys();
-
+            //remembering which hobby to remove person from and remove from person to avoid ConcurrentModificationException
+            Hobby hobbyToChange = null;
             for (Hobby hobby : hobbies) {
                 if (hobby.getName().equals(oldHobbyName)) {
-                    hobby.setName(newHobbyName);
-                    hobby.setDescription(newDescription);
+                    hobbyToChange = hobby;
                 }
             }
-
+            //checking if we need to add a new hobby to person and remove a person from a hobby and doing it if needed
+            if (hobbyToChange != null){
+                personToEdit.addHobby(new Hobby(newHobbyName, newDescription));
+                personToEdit.removeHobby(hobbyToChange);
+                hobbyToChange.removePerson(personToEdit);
+            }
+            
             em.getTransaction().begin();
             em.merge(personToEdit);
             em.getTransaction().commit();
@@ -112,7 +123,9 @@ public class Facade implements FacadeInterface {
             return pDTO;
         } catch (NoResultException ex) {
             throw new PersonNotFoundException("Person with given name could not be found");
-        } finally {
+        } catch (NonUniqueResultException ex) {
+            throw new PersonNotFoundException("Multiple people with same name and last name found, cannot proceed with editing");
+        }finally {
             em.close();
         }
     }
@@ -317,4 +330,31 @@ public class Facade implements FacadeInterface {
             em.close();
         }
     }
+    
+    public List<HobbyDTO> getAllhobbies(){
+        EntityManager em = emf.createEntityManager();
+        try {
+            List<Hobby> hobbies = em.createQuery("SELECT h FROM Hobby h").getResultList();
+            List<HobbyDTO> hobbydtos = new ArrayList<>();
+            for (Hobby hobby : hobbies) {
+                HobbyDTO hdto = new HobbyDTO(hobby);
+                List<PersonDTO> persondtos = new ArrayList<>();
+                for (Person person : hobby.getPersons()) {
+                    persondtos.add(new PersonDTO(person));
+                }
+                hdto.setPersons(persondtos);
+                hobbydtos.add(hdto);
+            }
+            return hobbydtos;
+        } finally {
+            em.close();
+        }
+    }
+    
+//    public static void main(String[] args) throws PersonNotFoundException {
+//        emf = EMF_Creator.createEntityManagerFactory(EMF_Creator.DbSelector.TEST, EMF_Creator.Strategy.NONE);
+//        Facade facade = Facade.getFacade(emf);
+//        PersonDTO pdto = facade.editPersonHobby("Gurli", "Mogensen", "Film", "Løbe", "new hobby");
+//        System.out.println(facade.getAllhobbies());
+//    }
 }

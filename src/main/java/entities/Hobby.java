@@ -22,15 +22,12 @@ public class Hobby implements Serializable {
     private String name;
     private String description;
     @ManyToMany (mappedBy = "hobbys")
-    @ElementCollection
     private List<Person> persons;
+
 
     public Hobby() {
     }
 
-    public List<Person> getPersons() {
-        return persons;
-    }
 
     
     
@@ -39,6 +36,28 @@ public class Hobby implements Serializable {
         this.description = description;
     }
 
+    public void setPersons(List<Person> persons) {
+        this.persons = persons;
+    }
+    
+    public void addPerson(Person person){
+        this.persons.add(person);
+    }
+    
+    public void removePerson(Person person){
+        Person personToBeRemoved = null;
+        for (Person person_ : this.persons){
+            if (person_.getFirstName().equals(person.getFirstName()) && person_.getLastName().equals(person.getLastName())){
+                personToBeRemoved = person_;
+            }
+        }
+                this.persons.remove(personToBeRemoved);
+    }
+    
+    public List<Person> getPersons() {
+        return persons;
+    }
+    
     @Override
     public String toString() {
         return "Hobby{" + "id=" + id + ", name=" + name + ", description=" + description + ", persons=" + persons + '}';

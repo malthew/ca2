@@ -71,22 +71,28 @@ and open the template in the editor.
                 </tr>
                 <tr>
                     <td>GET</td>
-                    <td>/api/person/{name}/phones</td>
+                    <td>/api/person/phones/{firstname}/{lastname}</td>
                     <td></td>
-                    <td>[Number, Number, ...]</td>
+                    <td>[Phone, Phone, ...] (1)</td>
                     <td>(e5)</td>
                 </tr>
             </table>
             <div class="container">
             <h3>Request Body and Response Formats</h3>
-            <p>(1) Person format<br>
-                { <br>
+            <h4>(1) Person format</h4>
+             <p>   { <br>
                 "email": String <br>
                 "firstName": String <br>
                 "lastName": String <br>
                 "phones": [Number, Number, ...] <br>
                 "address": { "street": String, "additional info": String, "persons": [person, person, ...]} <br>
                 "hobbies": [hobby, hobby, ...] <br>
+            }</p>
+             <h4>(1) Phone format</h4>
+            <p>   { <br>
+                "description": String <br>
+                "number": int <br>
+                "person": Person (1) <br>
             }</p>
             
             <h3>Errors</h3>

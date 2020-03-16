@@ -116,7 +116,13 @@ public class FacadeTest {
     public void tearDown() {
 //        Remove any data after each test was run
     }
-
+    
+    @Test
+    public void testGetallHobbies() {
+        //expecting there to be 3 hobbies
+        assertEquals(3, facade.getAllhobbies().size());
+    }
+    
     @Test
     public void testGetPhonesFromPerson() throws PersonNotFoundException {
         //expecting p1 Gurli Mogensen to have 2 phones
@@ -157,7 +163,10 @@ public class FacadeTest {
         String newHobbyName = "Løbe";
         String newDescription = "new hobby";
         PersonDTO p = facade.editPersonHobby(firstName, lastName, oldHobbyName, newHobbyName, newDescription);
+        //checking if the person now has a hobby with the name "Løbe"
         assertTrue(p.getHobbies().stream().anyMatch(hobbyDTO -> hobbyDTO.getName().equals("Løbe")));
+        //checking of the total list of hobbies is now 4
+        assertTrue(facade.getAllhobbies().size() == 4);
     }
     
     @Test

@@ -20,7 +20,7 @@ public class Phone implements Serializable {
     private Long id;
     private int number;
     private String description;
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     private Person person;
 
 
