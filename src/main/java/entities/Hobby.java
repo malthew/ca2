@@ -2,13 +2,11 @@ package entities;
 
 import java.io.Serializable;
 import java.util.List;
-import javax.persistence.CascadeType;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQuery;
 
@@ -24,6 +22,7 @@ public class Hobby implements Serializable {
     private String name;
     private String description;
     @ManyToMany (mappedBy = "hobbys")
+    @ElementCollection
     private List<Person> persons;
 
     public Hobby() {
@@ -38,6 +37,11 @@ public class Hobby implements Serializable {
     public Hobby(String name, String description) {
         this.name = name;
         this.description = description;
+    }
+
+    @Override
+    public String toString() {
+        return "Hobby{" + "id=" + id + ", name=" + name + ", description=" + description + ", persons=" + persons + '}';
     }
 
     public Long getId() {

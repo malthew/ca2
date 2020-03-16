@@ -61,17 +61,17 @@ public class Facade implements FacadeInterface {
             em.getTransaction().begin();
             em.merge(personToEdit);
             em.getTransaction().commit();
-            
+
             //making a list of phoneDTO's for the PersonDTO to have
             PersonDTO pDTO = new PersonDTO(personToEdit);
             List<PhoneDTO> phonedtos = new ArrayList<>();
             for (Phone phone : personToEdit.getPhones()) {
                 phonedtos.add(new PhoneDTO(phone));
             }
-            
+
             pDTO.setPhones(phonedtos);
             return pDTO;
-            } catch (NoResultException ex) {
+        } catch (NoResultException ex) {
             throw new PersonNotFoundException("Person with given name could not be found");
         } finally {
             em.close();
@@ -100,17 +100,17 @@ public class Facade implements FacadeInterface {
             em.getTransaction().begin();
             em.merge(personToEdit);
             em.getTransaction().commit();
-            
+
             //making a list of hobbyDTO's for the PersonDTO to have
             PersonDTO pDTO = new PersonDTO(personToEdit);
             List<HobbyDTO> hobbydtos = new ArrayList<>();
             for (Hobby hobby : personToEdit.getHobbys()) {
                 hobbydtos.add(new HobbyDTO(hobby));
             }
-            
+
             pDTO.setHobbies(hobbydtos);
             return pDTO;
-            } catch (NoResultException ex) {
+        } catch (NoResultException ex) {
             throw new PersonNotFoundException("Person with given name could not be found");
         } finally {
             em.close();
@@ -141,7 +141,6 @@ public class Facade implements FacadeInterface {
         }
     }
 
-    
     public void createPerson(PersonDTO person) {
         EntityManager em = emf.createEntityManager();
         Person entperson = new Person();
@@ -157,13 +156,13 @@ public class Facade implements FacadeInterface {
             em.close();
         }
     }
-    
+
     public List<PersonDTO> findPerson(String firstName) {
         EntityManager em = emf.createEntityManager();
         //Person person;
         try {
             em.getTransaction().begin();
-           TypedQuery<Person> query = em.createQuery("SELECT p FROM Person p WHERE "
+            TypedQuery<Person> query = em.createQuery("SELECT p FROM Person p WHERE "
                     + "p.firstName = :firstName", Person.class)
                     .setParameter("firstName", firstName);
             em.getTransaction().commit();
@@ -215,7 +214,7 @@ public class Facade implements FacadeInterface {
             em.close();
         }
     }
-    
+
     public void addCity(CityInfoDTO city) {
         EntityManager em = emf.createEntityManager();
         CityInfo entcity = new CityInfo();
@@ -229,16 +228,41 @@ public class Facade implements FacadeInterface {
             em.close();
         }
     }
-    
+
     public List<CityInfoDTO> getAllZipCodes() {
         EntityManager em = emf.createEntityManager();
         try {
-            List<CityInfoDTO> list =  em.createQuery("SELECT c FROM CityInfo c").getResultList();
+            List<CityInfoDTO> list = em.createQuery("SELECT c FROM CityInfo c").getResultList();
             return list;
         } finally {
             em.close();
         }
     }
-    
 
+    public List<PersonDTO> getAllPersonsWithHobby(String hobbyName) throws PersonNotFoundException {
+        EntityManager em = emf.createEntityManager();
+        try {
+            List<Person> persons = em.createQuery("SELECT p FROM Person p JOIN p.hobbys ph WHERE ph.name = :hobby", Person.class)
+                    .setParameter("hobby", hobbyName)
+                    .getResultList();
+
+              List<PersonDTO> persondtos = new ArrayList();
+              for (Person person : persons) {
+                persondtos.add(new PersonDTO(person));
+            }
+              
+            return persondtos;
+        } catch (NoResultException ex) {
+            throw new PersonNotFoundException("Persons with given Hobby name could not be found");
+        } finally {
+            em.close();
+        }
+    }
+
+//    public List<PersonDTO> getAllPersonsWithZip(int zipCode) {
+//        EntityManager em = emf.createEntityManager();
+//        try {
+//            List<Person> persons = em.createQuery("SELECT p FROM Person p WHERE p.address")
+//        }
+//    }
 }

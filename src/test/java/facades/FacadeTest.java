@@ -187,5 +187,10 @@ public class FacadeTest {
         List<PersonDTO> list = facade.findPerson("John");
         assertTrue(list.get(0).getFirstName().equals("John"));
     }
+    
+    @Test
+    public void testGetAllPersonsWithHobby() throws PersonNotFoundException {
+        assertThat(facade.getAllPersonsWithHobby("Film"), hasSize(2));
+    }
 
 }
