@@ -26,6 +26,16 @@ public class PersonDTO {
 
     public PersonDTO() {
     }
+
+    public int getPersonid() {
+        return personid;
+    }
+
+    public void setPersonid(int personid) {
+        this.personid = personid;
+    }
+    
+    
     
     public String getEmail() {
         return email;
