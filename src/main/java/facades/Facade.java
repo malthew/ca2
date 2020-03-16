@@ -246,11 +246,11 @@ public class Facade implements FacadeInterface {
                     .setParameter("hobby", hobbyName)
                     .getResultList();
 
-              List<PersonDTO> persondtos = new ArrayList();
-              for (Person person : persons) {
+            List<PersonDTO> persondtos = new ArrayList();
+            for (Person person : persons) {
                 persondtos.add(new PersonDTO(person));
             }
-              
+
             return persondtos;
         } catch (NoResultException ex) {
             throw new PersonNotFoundException("Persons with given Hobby name could not be found");
@@ -265,4 +265,56 @@ public class Facade implements FacadeInterface {
 //            List<Person> persons = em.createQuery("SELECT p FROM Person p WHERE p.address")
 //        }
 //    }
+    public String fillDB() {
+        EntityManager em = emf.createEntityManager();
+        try {
+        em.getTransaction().begin();
+        CityInfo c1 = new CityInfo(2100, "KBH Ø");
+        CityInfo c2 = new CityInfo(2300, "KBH S");
+
+        Person p1 = new Person(1, "email", "Gurli", "Mogensen");
+        Person p2 = new Person(2, "mail", "Gunnar", "Hjorth");
+
+        Hobby h1 = new Hobby("Cykling", "Cykling på hold");
+        Hobby h2 = new Hobby("Film", "Gyserfilm");
+        Hobby h3 = new Hobby("Film", "Dramafilm");
+
+        Address a1 = new Address("Testgade", "dejligt sted");
+        Address a2 = new Address("Testvej", "fint sted");
+
+        Phone phone1 = new Phone(1234, "hjemmetelefon");
+        Phone phone2 = new Phone(5678, "mobil");
+        Phone phone3 = new Phone(4321, "arbejdstelefon");
+
+        //adding address to CityInfo
+        c1.addAddress(a1);
+        c2.addAddress(a2);
+        //Persisting CityInfo
+        em.persist(c1);
+        em.persist(c2);
+        //adding address to persons
+        p1.setAddress(a1);
+        p2.setAddress(a2);
+        //setting persons to phones
+        phone1.setPerson(p1);
+        phone2.setPerson(p1);
+        phone3.setPerson(p2);
+        //adding phones to persons
+        p1.addPhone(phone1);
+        p1.addPhone(phone2);
+        p2.addPhone(phone3);
+        //adding hobbies to persons 
+        p1.addHobby(h1);
+        p1.addHobby(h2);
+        p2.addHobby(h3);
+        //persisting persons
+        em.persist(p1);
+        em.persist(p2);
+        em.getTransaction().commit();
+        
+        return "{\"status\":\"filled\"}";
+        } finally {
+            em.close();
+        }
+    }
 }
