@@ -1,0 +1,21 @@
+h1 {
+    text-align: center;
+}
+
+h3 {
+    text-align: center;
+}
+
+#buttonGroup{
+    text-align: center;
+}
+
+input[type=submit] {
+    color: black;
+    background-color: lightgreen;
+    padding: 12px 20px;
+    margin: 8px 19px 8px 0px;
+    border: 2px solid red;
+    border-radius: 25px;
+}
+
