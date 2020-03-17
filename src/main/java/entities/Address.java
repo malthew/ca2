@@ -1,6 +1,7 @@
 package entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -23,7 +24,7 @@ public class Address implements Serializable {
     private String additionalInfo;
     @OneToMany(mappedBy = "address" ,
             cascade = CascadeType.PERSIST)
-    private List<Person> persons;
+    private List<Person> persons = new ArrayList<>();
 
     public Address() {
     }
@@ -39,6 +40,10 @@ public class Address implements Serializable {
 
     public void setPersons(List<Person> persons) {
         this.persons = persons;
+    }
+    
+    public void addPerson(Person person) {
+        this.persons.add(person);
     }
 
     public Long getId() {
