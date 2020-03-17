@@ -9,7 +9,7 @@ import entities.CityInfo;
 import entities.Hobby;
 import entities.Person;
 import entities.Phone;
-import exceptions.PersonNotFoundException;
+import exceptions.NotFoundException;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -62,9 +62,9 @@ public class FacadeTest {
             em.getTransaction().begin();
             em.createNamedQuery("Phone.deleteAllRows").executeUpdate();
             em.createNamedQuery("Person.deleteAllRows").executeUpdate();
-            em.createNamedQuery("CityInfo.deleteAllRows").executeUpdate();
             em.createNamedQuery("Address.deleteAllRows").executeUpdate();
             em.createNamedQuery("Hobby.deleteAllRows").executeUpdate();
+            em.createNamedQuery("CityInfo.deleteAllRows").executeUpdate();
             c1 = new CityInfo(2100, "KBH Ø");
             c2 = new CityInfo(2300, "KBH S");
 
@@ -124,28 +124,28 @@ public class FacadeTest {
     }
     
     @Test
-    public void testGetPhonesFromPerson() throws PersonNotFoundException {
+    public void testGetPhonesFromPerson() throws NotFoundException {
         //expecting p1 Gurli Mogensen to have 2 phones
         assertEquals(2, facade.getPhonesFromPerson("Gurli", "Mogensen").size());
     }
     @Test
-    public void testGetPhonesFromPerson2() throws PersonNotFoundException {
+    public void testGetPhonesFromPerson2() throws NotFoundException {
         //expecting p1 Gurli Mogensen to have 2 phones
         assertEquals(1, facade.getPhonesFromPerson("Gunnar", "Hjorth").size());
     }
 
     @Test
-    public void testGetPhonesFromPersonWrongName() throws PersonNotFoundException {
+    public void testGetPhonesFromPersonWrongName() throws NotFoundException {
         try {
             List<PhoneDTO> phones = facade.getPhonesFromPerson("forkert", "Mogensen");
             fail("Expected a PersonNotFoundException to be thrown");
-        } catch (PersonNotFoundException ex) {
+        } catch (NotFoundException ex) {
             assertThat(ex.getMessage(), is("Person with given name could not be found"));
         }  
     }
     
     @Test
-    public void testEditPersonPhone() throws PersonNotFoundException {
+    public void testEditPersonPhone() throws NotFoundException {
         String firstName = "Gurli";
         String lastName = "Mogensen";
         int oldNumber = 1234;
@@ -156,7 +156,7 @@ public class FacadeTest {
     }
     
     @Test
-    public void testEditPersonHobby() throws PersonNotFoundException {
+    public void testEditPersonHobby() throws NotFoundException {
         String firstName = "Gurli";
         String lastName = "Mogensen";
         String oldHobbyName = "Film";
@@ -198,7 +198,7 @@ public class FacadeTest {
     }
     
     @Test
-    public void testGetAllPersonsWithHobby() throws PersonNotFoundException {
+    public void testGetAllPersonsWithHobby() throws NotFoundException {
         assertThat(facade.getAllPersonsWithHobby("Film"), hasSize(2));
     }
     

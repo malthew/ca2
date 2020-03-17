@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 
@@ -23,7 +24,8 @@ public class CityInfo implements Serializable {
     private int zipCode;
     private String city;
     @OneToMany (cascade = CascadeType.PERSIST)
-    private List<Address> addresses = new ArrayList<>();
+    @JoinColumn(name = "cityinfo_id")
+    private List<Address> addresses = new ArrayList();
 
     public CityInfo() {
     }
