@@ -58,23 +58,30 @@ and open the template in the editor.
                 <tr>
                     <td>POST</td>
                     <td>/api/person/create</td>
-                    <td>person (1) without id</td>
+                    <td>person (1)</td>
                     <td>person (1)</td>
                     <td>(e3)</td>
                 </tr>
                 <tr>
                     <td>PUT</td>
-                    <td>/api/person/edit</td>
+                    <td>/api/person/edit/phone/{oldNumber}/{newNumber}/{newDescription}</td>
                     <td>person (1)</td>
+                    <td>person (2)</td>
+                    <td>(e4)(e5)(e6)</td>
+                </tr>
+                <tr>
+                    <td>PUT</td>
+                    <td>/api/person/edit/hobby/{oldHobbyName}/{newHobbyName}/{newDescription}</td>
                     <td>person (1)</td>
-                    <td>(e4)</td>
+                    <td>person (3)</td>
+                    <td>(e4)(e5)(e6)</td>
                 </tr>
                 <tr>
                     <td>GET</td>
                     <td>/api/person/phones/{firstname}/{lastname}</td>
                     <td></td>
                     <td>[Phone, Phone, ...] (1)</td>
-                    <td>(e5)</td>
+                    <td>(e7)</td>
                 </tr>
             </table>
             <div class="container">
@@ -84,15 +91,34 @@ and open the template in the editor.
                 "email": String <br>
                 "firstName": String <br>
                 "lastName": String <br>
-                "phones": [Number, Number, ...] <br>
+                "phones": [Phone, Phone, ...] (1) <br>
                 "address": { "street": String, "additional info": String, "persons": [person, person, ...]} <br>
-                "hobbies": [hobby, hobby, ...] <br>
+                "hobbies": [Hobby, Hobby, ...] (1) <br>
+            }</p>
+            <h4>(2) Person format</h4>
+             <p>   { <br>
+                "email": String <br>
+                "firstName": String <br>
+                "lastName": String <br>
+                "phones": [Phone, Phone, ...] (1) <br>
+            }</p>
+             <h4>(3) Person format</h4>
+             <p>   { <br>
+                "email": String <br>
+                "firstName": String <br>
+                "lastName": String <br>
+                "hobbies": [Hobby, Hobby, ...] (1) <br>
             }</p>
              <h4>(1) Phone format</h4>
             <p>   { <br>
                 "description": String <br>
                 "number": int <br>
                 "person": Person (1) <br>
+            }</p>
+            <h4>(1) Hobby format</h4>
+            <p>   { <br>
+                "description": String <br>
+                "name": String <br>
             }</p>
             
             <h3>Errors</h3>
@@ -103,7 +129,9 @@ and open the template in the editor.
                 <li>(e2) :{ status : 400, "msg": "No persons found living in this city" }</li>
                 <li>(e3) :{ status : 400, "msg": "Field ‘xxx’ is required" } (for example, no name provided)</li>
                 <li>(e4) :{ status : 400, "msg": "Person you are trying to edit cannot be found" }</li>
-                <li>(e5) :{ status : 400, "msg": "No phones found for person with that name" }</li>
+                <li>(e5) :{ status : 400, "msg": "Person with given name could not be found" }</li>
+                <li>(e6) :{ status : 400, "msg": "Multiple people with same name and last name found, cannot proceed with editing" }</li>
+                <li>(e7) :{ status : 400, "msg": "No phones found for person with that name" }</li>
             </ul>
             </div>
         </div>

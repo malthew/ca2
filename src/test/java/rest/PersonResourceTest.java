@@ -1,5 +1,6 @@
 package rest;
 
+import dtos.PersonDTO;
 import entities.Address;
 import entities.CityInfo;
 import entities.Hobby;
@@ -8,6 +9,7 @@ import entities.Phone;
 import facades.Facade;
 import io.restassured.RestAssured;
 import static io.restassured.RestAssured.given;
+import static io.restassured.RestAssured.with;
 import io.restassured.parsing.Parser;
 import java.net.URI;
 import javax.persistence.EntityManager;
@@ -17,10 +19,15 @@ import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.util.HttpStatus;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.hamcrest.MatcherAssert;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -156,5 +163,55 @@ public class PersonResourceTest {
                 .statusCode(HttpStatus.BAD_REQUEST_400.getStatusCode())
                 .body("code", equalTo(400))
                 .body("message", equalTo("Bad Request"));
+    }
+    
+    @Test
+    public void testEditPersonPhone() {
+
+        PersonDTO expResult = new PersonDTO(p1);
+
+        PersonDTO result
+                = with()
+                        .body(expResult) //include object in body
+                        .contentType("application/json")
+                        .when().request("PUT", "/person/edit/phone/1234/9999/new_phone").then() //put REQUEST
+                        .assertThat()
+                        .statusCode(HttpStatus.OK_200.getStatusCode())
+                        .extract()
+                        .as(PersonDTO.class); //extract result JSON as object
+        
+        //checking that nothing has changed that we don't want to change
+        assertThat((result.getFirstName()), equalTo(expResult.getFirstName()));
+        assertThat((result.getLastName()), equalTo(expResult.getLastName()));
+        //checking that the person has the two phone numbers we want
+        assertTrue(result.getPhones().stream().anyMatch(phoneDTO -> phoneDTO.getNumber() == 9999));
+        assertTrue(result.getPhones().stream().anyMatch(phoneDTO -> phoneDTO.getNumber() == 5678));
+        //checking that the person does not have the old number anymore
+        assertFalse(result.getPhones().stream().anyMatch(phoneDTO -> phoneDTO.getNumber() == 1234));
+    }
+    
+    @Test
+    public void testEditPersonHobby() {
+
+        PersonDTO expResult = new PersonDTO(p1);
+
+        PersonDTO result
+                = with()
+                        .body(expResult) //include object in body
+                        .contentType("application/json")
+                        .when().request("PUT", "/person/edit/hobby/Film/Løbe/new_hobby").then() //put REQUEST
+                        .assertThat()
+                        .statusCode(HttpStatus.OK_200.getStatusCode())
+                        .extract()
+                        .as(PersonDTO.class); //extract result JSON as object
+        
+        //checking that nothing has changed that we don't want to change
+        assertThat((result.getFirstName()), equalTo(expResult.getFirstName()));
+        assertThat((result.getLastName()), equalTo(expResult.getLastName()));
+        //checking that the person has the two hobbies we want
+        assertTrue(result.getHobbies().stream().anyMatch(hobbyDTO -> hobbyDTO.getName().equals("Løbe")));
+        assertTrue(result.getHobbies().stream().anyMatch(hobbyDTO -> hobbyDTO.getName().equals("Cykling")));
+        //checking that the person does not have the old hobby anymore
+        assertFalse(result.getHobbies().stream().anyMatch(hobbyDTO -> hobbyDTO.getName().equals("Film")));
     }
 }
