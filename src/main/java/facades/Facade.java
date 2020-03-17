@@ -11,6 +11,7 @@ import entities.Hobby;
 import entities.Person;
 import entities.Phone;
 import exceptions.AlreadyInUseException;
+import exceptions.AlreadyInOrderException;
 import exceptions.NotFoundException;
 import java.util.ArrayList;
 import java.util.List;
@@ -464,8 +465,11 @@ public class Facade implements FacadeInterface {
         }
     }
 
-    public PersonDTO addPhone(PhoneDTO phonedto, String firstName, String lastName) throws NotFoundException {
+    public PersonDTO addPhone(PhoneDTO phonedto, String firstName, String lastName) throws NotFoundException, AlreadyInOrderException {
         EntityManager em = emf.createEntityManager();
+        if (phonedto.getNumber() == 0 || phonedto.getDescription() == null){
+            throw new NotFoundException("phone information missing in body");
+        }
         Phone phone = new Phone(phonedto.getNumber(), phonedto.getDescription());
         try {
             TypedQuery<Person> q = em.createQuery("SELECT p FROM Person p WHERE "
@@ -473,12 +477,12 @@ public class Facade implements FacadeInterface {
                     .setParameter("firstName", firstName)
                     .setParameter("lastName", lastName);
             Person person = q.getSingleResult();
-
+            
+            
             //checking if person already has a phone with given number
-            for (Phone p : person.getPhones()) {
-                if (p.getNumber() == phonedto.getNumber()) {
-                    //HUSK AT ÆNDRE EXCEPTION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    throw new NotFoundException("Person already has a phone with that number");
+            for(Phone p : person.getPhones()){
+                if (p.getNumber() == phonedto.getNumber()){
+                    throw new AlreadyInOrderException("Person already has a phone with that number");
                 }
             }
             person.addPhone(phone);
@@ -486,7 +490,7 @@ public class Facade implements FacadeInterface {
             em.getTransaction().begin();
             em.persist(person);
             em.getTransaction().commit();
-
+            
             //making list of PhoneDTOs for PersonDTO to have
             PersonDTO pDTO = new PersonDTO(person);
             List<PhoneDTO> phonedtos = new ArrayList<>();

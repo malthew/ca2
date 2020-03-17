@@ -1,6 +1,7 @@
 package rest;
 
 import dtos.PersonDTO;
+import dtos.PhoneDTO;
 import entities.Address;
 import entities.CityInfo;
 import entities.Hobby;
@@ -214,4 +215,33 @@ public class PersonResourceTest {
         //checking that the person does not have the old hobby anymore
         assertFalse(result.getHobbies().stream().anyMatch(hobbyDTO -> hobbyDTO.getName().equals("Film")));
     }
+    
+    @Test
+    public void testAddPhone() {
+
+        PhoneDTO phoneToBeAdded = new PhoneDTO(7777, "new phone");
+
+        PersonDTO result
+                = with()
+                        .body(phoneToBeAdded) //include object in body
+                        .contentType("application/json")
+                        .when().request("POST", "/person/add/phone/Gurli/Mogensen").then() //put REQUEST
+                        .assertThat()
+                        .statusCode(HttpStatus.OK_200.getStatusCode())
+                        .extract()
+                        .as(PersonDTO.class); //extract result JSON as object
+        
+        //checking that nothing has changed that we don't want to change
+        assertThat((result.getFirstName()), equalTo("Gurli"));
+        assertThat((result.getLastName()), equalTo("Mogensen"));
+        //checking that the person has the new phone with right number and description
+        assertTrue(result.getPhones().stream().anyMatch(phoneDTO -> phoneDTO.getNumber() == 7777));
+        assertTrue(result.getPhones().stream().anyMatch(phoneDTO -> phoneDTO.getDescription().equals("new phone")));
+        //checking that the person still has both old phones
+        assertTrue(result.getPhones().stream().anyMatch(phoneDTO -> phoneDTO.getNumber() == 1234));
+        assertTrue(result.getPhones().stream().anyMatch(phoneDTO -> phoneDTO.getNumber() == 5678));
+        //checking that the person has 3 phones now
+        assertThat(result.getPhones().size(), equalTo(3));
+    }
+       
 }

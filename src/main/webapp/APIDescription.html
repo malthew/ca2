@@ -58,22 +58,22 @@ and open the template in the editor.
                 <tr>
                     <td>POST</td>
                     <td>/api/person/create</td>
-                    <td>person (1)</td>
-                    <td>person (1)</td>
+                    <td>Person (1)</td>
+                    <td>Person (1)</td>
                     <td>(e3)</td>
                 </tr>
                 <tr>
                     <td>PUT</td>
                     <td>/api/person/edit/phone/{oldNumber}/{newNumber}/{newDescription}</td>
-                    <td>person (1)</td>
-                    <td>person (2)</td>
+                    <td>Person (1)</td>
+                    <td>Person (2)</td>
                     <td>(e4)(e5)(e6)(e7)</td>
                 </tr>
                 <tr>
                     <td>PUT</td>
                     <td>/api/person/edit/hobby/{oldHobbyName}/{newHobbyName}/{newDescription}</td>
-                    <td>person (1)</td>
-                    <td>person (3)</td>
+                    <td>Person (1)</td>
+                    <td>Person (3)</td>
                     <td>(e4)(e5)(e6)(e7)</td>
                 </tr>
                 <tr>
@@ -82,6 +82,13 @@ and open the template in the editor.
                     <td></td>
                     <td>[Phone, Phone, ...] (1)</td>
                     <td>(e5)(e8)</td>
+                </tr>
+                <tr>
+                    <td>POST</td>
+                    <td>/api/person/add/phone/{firstname}/{lastname}</td>
+                    <td> Phone (1)</td>
+                    <td>Person (2)</td>
+                    <td>(e5)(e6)(e7)(e9)(e10)</td>
                 </tr>
             </table>
             <div class="container">
@@ -133,6 +140,8 @@ and open the template in the editor.
                 <li>(e6) :{ status : 400, "msg": "Multiple people with same name and last name found, cannot proceed with editing" }</li>
                 <li>(e7) :{ status : 400, "msg": "Not all required arguments included" }</li>
                 <li>(e8) :{ status : 400, "msg": "No phones found for person with that name" }</li>
+                <li>(e9) :{ status : 400, "msg": "Phone information missing in body" }</li>
+                <li>(e10) :{ status : 400, "msg": "Person already has a phone with that number" }</li>
             </ul>
             </div>
         </div>
