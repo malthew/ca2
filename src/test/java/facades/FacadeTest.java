@@ -203,7 +203,7 @@ public class FacadeTest {
     }
     
     @Test
-    public void testAddPhone() throws PersonNotFoundException {
+    public void testAddPhone() throws NotFoundException {
         PhoneDTO phonedto = new PhoneDTO(8888, "added phone");
         String firstName = "Gurli";
         String lastName = "Mogensen";
@@ -215,7 +215,7 @@ public class FacadeTest {
     }
     
     @Test
-    public void testAddPhoneNumberAlreadyExists() throws PersonNotFoundException {
+    public void testAddPhoneNumberAlreadyExists() throws NotFoundException {
         //already has phone with number 1234
         PhoneDTO phonedto = new PhoneDTO(1234, "added phone");
         String firstName = "Gurli";
@@ -223,7 +223,7 @@ public class FacadeTest {
         try {
             PersonDTO pDTO = facade.addPhone(phonedto, firstName, lastName);
             fail("Expected a PersonNotFoundException to be thrown");
-        } catch (PersonNotFoundException ex) {
+        } catch (NotFoundException ex) {
             assertThat(ex.getMessage(), is("Person already has a phone with that number"));
         }
     }
