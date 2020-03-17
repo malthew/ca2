@@ -5,12 +5,14 @@ import com.google.gson.GsonBuilder;
 import dtos.ExceptionDTO;
 import dtos.PersonDTO;
 import dtos.PhoneDTO;
+import exceptions.AlreadyInOrderException;
 import exceptions.NotFoundException;
 import facades.Facade;
 import java.util.List;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -37,6 +39,9 @@ public class PersonResource {
     @Path("phones/{firstname}/{lastname}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<PhoneDTO> getPhonesFromPerson(@PathParam("firstname") String firstname, @PathParam("lastname") String lastname) throws NotFoundException {
+        if (firstname == null || lastname == null) {
+            throw new WebApplicationException("Not all required arguments included", 400);
+        }
         try {
         return FACADE.getPhonesFromPerson(firstname, lastname);
         }catch(NotFoundException ex){
@@ -85,5 +90,19 @@ public class PersonResource {
         }
     }
     
+    @POST
+    @Path("add/phone/{firstName}/{lastName}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public PersonDTO addPhone(PhoneDTO phone, @PathParam("firstName") String firstName, @PathParam("lastName") String lastName) {
+        if (firstName == null || lastName == null) {
+            throw new WebApplicationException("Not all required arguments included", 400);
+        }
+        try {
+        return FACADE.addPhone(phone, firstName, lastName);
+        }catch(NotFoundException | AlreadyInOrderException ex){
+            throw new WebApplicationException(ex.getMessage(), 400);
+        }
+    }
     
 }

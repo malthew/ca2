@@ -9,6 +9,7 @@ import entities.CityInfo;
 import entities.Hobby;
 import entities.Person;
 import entities.Phone;
+import exceptions.AlreadyInOrderException;
 import exceptions.NotFoundException;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -203,7 +204,7 @@ public class FacadeTest {
     }
     
     @Test
-    public void testAddPhone() throws NotFoundException {
+    public void testAddPhone() throws NotFoundException, AlreadyInOrderException {
         PhoneDTO phonedto = new PhoneDTO(8888, "added phone");
         String firstName = "Gurli";
         String lastName = "Mogensen";
@@ -215,7 +216,7 @@ public class FacadeTest {
     }
     
     @Test
-    public void testAddPhoneNumberAlreadyExists() throws NotFoundException {
+    public void testAddPhoneNumberAlreadyExists() throws NotFoundException, AlreadyInOrderException {
         //already has phone with number 1234
         PhoneDTO phonedto = new PhoneDTO(1234, "added phone");
         String firstName = "Gurli";
@@ -223,7 +224,7 @@ public class FacadeTest {
         try {
             PersonDTO pDTO = facade.addPhone(phonedto, firstName, lastName);
             fail("Expected a PersonNotFoundException to be thrown");
-        } catch (NotFoundException ex) {
+        } catch (AlreadyInOrderException ex) {
             assertThat(ex.getMessage(), is("Person already has a phone with that number"));
         }
     }

@@ -10,6 +10,7 @@ import entities.CityInfo;
 import entities.Hobby;
 import entities.Person;
 import entities.Phone;
+import exceptions.AlreadyInOrderException;
 import exceptions.NotFoundException;
 import java.util.ArrayList;
 import java.util.List;
@@ -356,8 +357,11 @@ public class Facade implements FacadeInterface {
         }
     }
     
-    public PersonDTO addPhone(PhoneDTO phonedto, String firstName, String lastName) throws NotFoundException {
+    public PersonDTO addPhone(PhoneDTO phonedto, String firstName, String lastName) throws NotFoundException, AlreadyInOrderException {
         EntityManager em = emf.createEntityManager();
+        if (phonedto.getNumber() == 0 || phonedto.getDescription() == null){
+            throw new NotFoundException("phone information missing in body");
+        }
         Phone phone = new Phone(phonedto.getNumber(), phonedto.getDescription());
         try {
             TypedQuery<Person> q = em.createQuery("SELECT p FROM Person p WHERE "
@@ -370,8 +374,7 @@ public class Facade implements FacadeInterface {
             //checking if person already has a phone with given number
             for(Phone p : person.getPhones()){
                 if (p.getNumber() == phonedto.getNumber()){
-                    //HUSK AT ÆNDRE EXCEPTION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    throw new NotFoundException("Person already has a phone with that number");
+                    throw new AlreadyInOrderException("Person already has a phone with that number");
                 }
             }
             person.addPhone(phone);
