@@ -1,7 +1,7 @@
 package facades;
 
 import dtos.PhoneDTO;
-import exceptions.PersonNotFoundException;
+import exceptions.NotFoundException;
 import java.util.List;
 
 

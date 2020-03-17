@@ -10,7 +10,7 @@ import entities.CityInfo;
 import entities.Hobby;
 import entities.Person;
 import entities.Phone;
-import exceptions.PersonNotFoundException;
+import exceptions.NotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -41,7 +41,7 @@ public class Facade implements FacadeInterface {
         return emf.createEntityManager();
     }
 
-    public PersonDTO editPersonPhone(String firstName, String lastName, int oldNumber, int newNumber, String newDescription) throws PersonNotFoundException {
+    public PersonDTO editPersonPhone(String firstName, String lastName, int oldNumber, int newNumber, String newDescription) throws NotFoundException {
         EntityManager em = emf.createEntityManager();
         try {
             TypedQuery<Person> q = em.createQuery("SELECT p FROM Person p WHERE "
@@ -74,16 +74,16 @@ public class Facade implements FacadeInterface {
             pDTO.setPhones(phonedtos);
             return pDTO;
         } catch (NoResultException ex) {
-            throw new PersonNotFoundException("Person with given name could not be found");
+            throw new NotFoundException("Person with given name could not be found");
         } catch (NonUniqueResultException ex) {
-            throw new PersonNotFoundException("Multiple people with same name and last name found, cannot proceed with editing");
+            throw new NotFoundException("Multiple people with same name and last name found, cannot proceed with editing");
         }
         finally {
             em.close();
         }
     }
 
-    public PersonDTO editPersonHobby(String firstName, String lastName, String oldHobbyName, String newHobbyName, String newDescription) throws PersonNotFoundException {
+    public PersonDTO editPersonHobby(String firstName, String lastName, String oldHobbyName, String newHobbyName, String newDescription) throws NotFoundException {
         EntityManager em = emf.createEntityManager();
         try {
             TypedQuery<Person> q = em.createQuery("SELECT p FROM Person p WHERE "
@@ -122,15 +122,15 @@ public class Facade implements FacadeInterface {
             pDTO.setHobbies(hobbydtos);
             return pDTO;
         } catch (NoResultException ex) {
-            throw new PersonNotFoundException("Person with given name could not be found");
+            throw new NotFoundException("Person with given name could not be found");
         } catch (NonUniqueResultException ex) {
-            throw new PersonNotFoundException("Multiple people with same name and last name found, cannot proceed with editing");
+            throw new NotFoundException("Multiple people with same name and last name found, cannot proceed with editing");
         }finally {
             em.close();
         }
     }
 
-    public List<PhoneDTO> getPhonesFromPerson(String firstName, String lastName) throws PersonNotFoundException {
+    public List<PhoneDTO> getPhonesFromPerson(String firstName, String lastName) throws NotFoundException {
         EntityManager em = emf.createEntityManager();
         try {
             TypedQuery<Person> q = em.createQuery("SELECT p FROM Person p WHERE "
@@ -148,7 +148,7 @@ public class Facade implements FacadeInterface {
 
             return phonedtos;
         } catch (NoResultException ex) {
-            throw new PersonNotFoundException("Person with given name could not be found");
+            throw new NotFoundException("Person with given name could not be found");
         } finally {
             em.close();
         }
@@ -252,7 +252,7 @@ public class Facade implements FacadeInterface {
         }
     }
 
-    public List<PersonDTO> getAllPersonsWithHobby(String hobbyName) throws PersonNotFoundException {
+    public List<PersonDTO> getAllPersonsWithHobby(String hobbyName) throws NotFoundException {
         EntityManager em = emf.createEntityManager();
         try {
             List<Person> persons = em.createQuery("SELECT p FROM Person p JOIN p.hobbys ph WHERE ph.name = :hobby", Person.class)
@@ -266,7 +266,7 @@ public class Facade implements FacadeInterface {
 
             return persondtos;
         } catch (NoResultException ex) {
-            throw new PersonNotFoundException("Persons with given Hobby name could not be found");
+            throw new NotFoundException("Persons with given Hobby name could not be found");
         } finally {
             em.close();
         }
