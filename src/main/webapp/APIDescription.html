@@ -67,21 +67,21 @@ and open the template in the editor.
                     <td>/api/person/edit/phone/{oldNumber}/{newNumber}/{newDescription}</td>
                     <td>person (1)</td>
                     <td>person (2)</td>
-                    <td>(e4)(e5)(e6)</td>
+                    <td>(e4)(e5)(e6)(e7)</td>
                 </tr>
                 <tr>
                     <td>PUT</td>
                     <td>/api/person/edit/hobby/{oldHobbyName}/{newHobbyName}/{newDescription}</td>
                     <td>person (1)</td>
                     <td>person (3)</td>
-                    <td>(e4)(e5)(e6)</td>
+                    <td>(e4)(e5)(e6)(e7)</td>
                 </tr>
                 <tr>
                     <td>GET</td>
                     <td>/api/person/phones/{firstname}/{lastname}</td>
                     <td></td>
                     <td>[Phone, Phone, ...] (1)</td>
-                    <td>(e7)</td>
+                    <td>(e5)(e8)</td>
                 </tr>
             </table>
             <div class="container">
@@ -131,7 +131,8 @@ and open the template in the editor.
                 <li>(e4) :{ status : 400, "msg": "Person you are trying to edit cannot be found" }</li>
                 <li>(e5) :{ status : 400, "msg": "Person with given name could not be found" }</li>
                 <li>(e6) :{ status : 400, "msg": "Multiple people with same name and last name found, cannot proceed with editing" }</li>
-                <li>(e7) :{ status : 400, "msg": "No phones found for person with that name" }</li>
+                <li>(e7) :{ status : 400, "msg": "Not all required arguments included" }</li>
+                <li>(e8) :{ status : 400, "msg": "No phones found for person with that name" }</li>
             </ul>
             </div>
         </div>

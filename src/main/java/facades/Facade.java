@@ -52,7 +52,7 @@ public class Facade implements FacadeInterface {
             Person personToEdit = q.getSingleResult();
 
             List<Phone> phones = personToEdit.getPhones();
-
+            //checking if the oldNumber provided is actually a number the person has
             for (Phone phone : phones) {
                 if (phone.getNumber() == oldNumber) {
                     phone.setNumber(newNumber);
@@ -141,6 +141,9 @@ public class Facade implements FacadeInterface {
             Person person = q.getSingleResult();
 
             List<Phone> phones = person.getPhones();
+            //checking if the person has any phones
+            if(phones.isEmpty()) throw new PersonNotFoundException("No phones found for person with that name");
+            //changing phones to phonedtos
             List<PhoneDTO> phonedtos = new ArrayList<>();
             for (Phone phone : phones) {
                 phonedtos.add(new PhoneDTO(phone));
@@ -149,6 +152,8 @@ public class Facade implements FacadeInterface {
             return phonedtos;
         } catch (NoResultException ex) {
             throw new PersonNotFoundException("Person with given name could not be found");
+        } catch (NonUniqueResultException ex) {
+            throw new PersonNotFoundException("Multiple people with same name and last name found");
         } finally {
             em.close();
         }
@@ -351,10 +356,53 @@ public class Facade implements FacadeInterface {
         }
     }
     
+    public PersonDTO addPhone(PhoneDTO phonedto, String firstName, String lastName) throws PersonNotFoundException {
+        EntityManager em = emf.createEntityManager();
+        Phone phone = new Phone(phonedto.getNumber(), phonedto.getDescription());
+        try {
+            TypedQuery<Person> q = em.createQuery("SELECT p FROM Person p WHERE "
+                    + "p.firstName = :firstName AND p.lastName = :lastName", Person.class)
+                    .setParameter("firstName", firstName)
+                    .setParameter("lastName", lastName);
+            Person person = q.getSingleResult();
+            
+            
+            //checking if person already has a phone with given number
+            for(Phone p : person.getPhones()){
+                if (p.getNumber() == phonedto.getNumber()){
+                    //HUSK AT ÆNDRE EXCEPTION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    throw new PersonNotFoundException("Person already has a phone with that number");
+                }
+            }
+            person.addPhone(phone);
+            phone.setPerson(person);
+            em.getTransaction().begin();
+            em.persist(person);
+            em.getTransaction().commit();
+            
+            //making list of PhoneDTOs for PersonDTO to have
+            PersonDTO pDTO = new PersonDTO(person);
+            List<PhoneDTO> phonedtos = new ArrayList<>();
+            for (Phone ph : person.getPhones()) {
+                phonedtos.add(new PhoneDTO(ph));
+            }
+
+            pDTO.setPhones(phonedtos);
+            return pDTO;
+        } catch (NoResultException ex) {
+            throw new PersonNotFoundException("Person with given name could not be found");
+        } catch (NonUniqueResultException ex) {
+            throw new PersonNotFoundException("Multiple people with same name and last name found");
+        } finally {
+            em.close();
+        }
+    }
+    
 //    public static void main(String[] args) throws PersonNotFoundException {
 //        emf = EMF_Creator.createEntityManagerFactory(EMF_Creator.DbSelector.TEST, EMF_Creator.Strategy.NONE);
 //        Facade facade = Facade.getFacade(emf);
-//        PersonDTO pdto = facade.editPersonHobby("Gurli", "Mogensen", "Film", "Løbe", "new hobby");
-//        System.out.println(facade.getAllhobbies());
+//        PersonDTO pdto = facade.addPhone(new PhoneDTO(7777, "added phone"), "Gurli", "Mogensen");
+//        //PersonDTO pdto = facade.editPersonPhone("Gurli", "Mogensen", 1234, 9999, "new phone");
+//        System.out.println(pdto.getPhones());
 //    }
 }

@@ -201,5 +201,31 @@ public class FacadeTest {
     public void testGetAllPersonsWithHobby() throws PersonNotFoundException {
         assertThat(facade.getAllPersonsWithHobby("Film"), hasSize(2));
     }
+    
+    @Test
+    public void testAddPhone() throws PersonNotFoundException {
+        PhoneDTO phonedto = new PhoneDTO(8888, "added phone");
+        String firstName = "Gurli";
+        String lastName = "Mogensen";
+        PersonDTO pDTO = facade.addPhone(phonedto, firstName, lastName);
+        //checking if person now has a phone with number 8888
+        assertTrue(pDTO.getPhones().stream().anyMatch(phoneDTO -> phoneDTO.getNumber() == 8888));
+        //checking if person now has 3 phones (started with 2)
+        assertTrue(pDTO.getPhones().size() == 3);
+    }
+    
+    @Test
+    public void testAddPhoneNumberAlreadyExists() throws PersonNotFoundException {
+        //already has phone with number 1234
+        PhoneDTO phonedto = new PhoneDTO(1234, "added phone");
+        String firstName = "Gurli";
+        String lastName = "Mogensen";
+        try {
+            PersonDTO pDTO = facade.addPhone(phonedto, firstName, lastName);
+            fail("Expected a PersonNotFoundException to be thrown");
+        } catch (PersonNotFoundException ex) {
+            assertThat(ex.getMessage(), is("Person already has a phone with that number"));
+        }
+    }
 
 }
