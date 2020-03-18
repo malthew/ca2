@@ -14,6 +14,7 @@ public class AddressDTO {
     private String street;
     private String additionalInfo;
     private List<PersonDTO> persons;
+    private CityInfoDTO cityInfo;
     
     //Constructor for making AddressDTOs with data from the DB
     public AddressDTO(Address address) {
@@ -28,6 +29,14 @@ public class AddressDTO {
     }
 
     public AddressDTO() {
+    }
+
+    public CityInfoDTO getCityInfo() {
+        return cityInfo;
+    }
+
+    public void setCityInfo(CityInfoDTO cityInfo) {
+        this.cityInfo = cityInfo;
     }
     
     

@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 
@@ -25,6 +26,8 @@ public class Address implements Serializable {
     @OneToMany(mappedBy = "address" ,
             cascade = CascadeType.PERSIST)
     private List<Person> persons = new ArrayList<>();
+    @ManyToOne
+    private CityInfo cityInfo;
 
     public Address() {
     }
@@ -37,6 +40,16 @@ public class Address implements Serializable {
     public List<Person> getPersons() {
         return persons;
     }
+
+    public CityInfo getCityInfo() {
+        return cityInfo;
+    }
+
+    public void setCityInfo(CityInfo cityInfo) {
+        this.cityInfo = cityInfo;
+    }
+    
+    
 
     public void setPersons(List<Person> persons) {
         this.persons = persons;

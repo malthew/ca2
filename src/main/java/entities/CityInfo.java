@@ -23,8 +23,8 @@ public class CityInfo implements Serializable {
     private Long id;
     private int zipCode;
     private String city;
-    @OneToMany (cascade = CascadeType.PERSIST)
     @JoinColumn(name = "cityinfo_id")
+    @OneToMany(mappedBy = "cityInfo")
     private List<Address> addresses = new ArrayList();
 
     public CityInfo() {
