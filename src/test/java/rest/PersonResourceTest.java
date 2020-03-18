@@ -104,6 +104,9 @@ public class PersonResourceTest {
             //adding address to CityInfo
             c1.addAddress(a1);
             c2.addAddress(a2);
+            //adding cityInfo to address
+            a1.setCityInfo(c1);
+            a2.setCityInfo(c2);
             //Persisting CityInfo
             em.persist(c1);
             em.persist(c2);
