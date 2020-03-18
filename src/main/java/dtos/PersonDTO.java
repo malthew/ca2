@@ -12,9 +12,9 @@ public class PersonDTO {
     private String email;
     private String firstName;
     private String lastName;
-    private List<PhoneDTO> phones;
+    private List<PhoneDTO> phones = new ArrayList<>();
     private AddressDTO address;
-    private List<HobbyDTO> hobbies;
+    private List<HobbyDTO> hobbies = new ArrayList<>();
 
     //Constructor for making personDTOs with data from the DB
     public PersonDTO(Person person) {
@@ -68,6 +68,12 @@ public class PersonDTO {
     public void setPhones(List<PhoneDTO> phones) {
         this.phones = phones;
     }
+    
+    public void addPhonesFromEntity(List<Phone> phones){
+        for (Phone phone : phones) {
+            this.phones.add(new PhoneDTO(phone));
+        }
+    }
 
     public AddressDTO getAddress() {
         return address;
@@ -76,6 +82,10 @@ public class PersonDTO {
     public void setAddress(AddressDTO address) {
         this.address = address;
     }
+    
+    public void setAddressFromEntity(Address address){
+        this.address = new AddressDTO(address);
+    }
 
     public List<HobbyDTO> getHobbies() {
         return hobbies;
@@ -83,6 +93,12 @@ public class PersonDTO {
 
     public void setHobbies(List<HobbyDTO> hobbies) {
         this.hobbies = hobbies;
+    }
+    
+    public void addHobbiesFromEntity(List<Hobby> hobbies){
+        for (Hobby hobby : hobbies) {
+            this.hobbies.add(new HobbyDTO(hobby));
+        }
     }
 
     @Override

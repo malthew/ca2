@@ -11,7 +11,9 @@ import entities.Hobby;
 import entities.Person;
 import entities.Phone;
 import exceptions.AlreadyInOrderException;
+import exceptions.AlreadyInUseException;
 import exceptions.NotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -23,6 +25,7 @@ import static org.hamcrest.Matchers.is;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.BeforeAll;
@@ -227,7 +230,7 @@ public class FacadeTest {
         String lastName = "Mogensen";
         try {
             PersonDTO pDTO = facade.addPhone(phonedto, firstName, lastName);
-            fail("Expected a PersonNotFoundException to be thrown");
+            fail("Expected a AlreadyInOrderException to be thrown");
         } catch (AlreadyInOrderException ex) {
             assertThat(ex.getMessage(), is("Person already has a phone with that number"));
         }
@@ -298,6 +301,54 @@ public class FacadeTest {
             fail("No phone found");
         } catch (NotFoundException ex) {
             assertThat(ex.getMessage(), is("No phone found"));
+        }
+    }
+    
+    @Test
+    public void testCreatePersonWithInformation() throws AlreadyInUseException, NotFoundException{
+        PersonDTO person = new PersonDTO(new Person(3, "email2", "Asger", "Jansen"));
+        AddressDTO address = new AddressDTO(new Address("Testgade 4", "dejligt sted"));
+        CityInfoDTO cityInfo = new CityInfoDTO(3000, "Ny by");
+        cityInfo.addAddress(address);
+        address.setCityInfo(cityInfo);
+        List<HobbyDTO> hobby = new ArrayList();
+        hobby.add(new HobbyDTO("Cykling", "Cykling på hold"));
+        hobby.add(new HobbyDTO("Svømning", "Crawl"));
+        List<PhoneDTO> phone = new ArrayList();
+        phone.add(new PhoneDTO(4444, "hjemmetelefon"));
+        phone.add(new PhoneDTO(5555, "mobil"));
+        person.setAddress(address);
+        person.setHobbies(hobby);
+        person.setPhones(phone);
+        PersonDTO result = facade.createPersonWithInformations(person);
+        //checking if someone with the name Asger is now in the db so findPerson can fetch him
+        assertThat(result.getFirstName(), is (facade.findPerson(3).getFirstName()));
+        //checking if the persons new hobby has been added to db and can now be found
+        assertNotNull(facade.findHobby(new HobbyDTO("Svømning", "Crawl")));       
+    }
+    
+    @Test
+    public void testCreatePersonWithInformationWithPhoneAlreadyInUse() throws AlreadyInUseException, NotFoundException{
+        PersonDTO person = new PersonDTO(new Person(3, "email2", "Asger", "Jansen"));
+        AddressDTO address = new AddressDTO(new Address("Testgade 4", "dejligt sted"));
+        CityInfoDTO cityInfo = new CityInfoDTO(3000, "Ny by");
+        cityInfo.addAddress(address);
+        address.setCityInfo(cityInfo);
+        List<HobbyDTO> hobby = new ArrayList();
+        hobby.add(new HobbyDTO("Cykling", "Cykling på hold"));
+        hobby.add(new HobbyDTO("Svømning", "Crawl"));
+        List<PhoneDTO> phone = new ArrayList();
+        //changed number to 1234 a number that is already in use
+        phone.add(new PhoneDTO(1234, "hjemmetelefon"));
+        phone.add(new PhoneDTO(5555, "mobil"));
+        person.setAddress(address);
+        person.setHobbies(hobby);
+        person.setPhones(phone);
+        try {
+        PersonDTO result = facade.createPersonWithInformations(person);
+        fail("expected AlreadyInUseException to be thrown");
+        }catch(AlreadyInUseException ex) {
+            assertThat(ex.getMessage(), is("One of the phone numbers are already in use."));
         }
     }
 

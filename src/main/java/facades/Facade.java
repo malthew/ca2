@@ -439,7 +439,7 @@ public class Facade implements FacadeInterface {
         }
     }
 
-    public void createPersonWithInformations(PersonDTO person) throws AlreadyInUseException {
+    public PersonDTO createPersonWithInformations(PersonDTO person) throws AlreadyInUseException {
         EntityManager em = emf.createEntityManager();
         try {
             em.getTransaction().begin();
@@ -534,6 +534,12 @@ public class Facade implements FacadeInterface {
             }
             em.persist(entperson);
             em.getTransaction().commit();
+            PersonDTO pDTO = new PersonDTO(entperson);
+            pDTO.addHobbiesFromEntity(entperson.getHobbys());
+            pDTO.setAddressFromEntity(entperson.getAddress());
+            pDTO.addPhonesFromEntity(entperson.getPhones());
+            pDTO.setPersonid(entperson.getPersonid());
+            return pDTO;
         } finally {
             em.close();
         }
@@ -563,6 +569,7 @@ public class Facade implements FacadeInterface {
         person.setAddress(address);
         person.setHobbies(hobby);
         person.setPhones(phone);
-        pf.createPersonWithInformations(person);
+        PersonDTO result = pf.createPersonWithInformations(person);
+        System.out.println(result);
     }
 }
