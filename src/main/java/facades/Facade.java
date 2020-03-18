@@ -520,7 +520,15 @@ public class Facade implements FacadeInterface {
             entperson.setLastName(person.getLastName());
 
             //Checking if address exist
-            Address entaddress = findAddress(address);
+            TypedQuery<Address> query = em.createQuery("SELECT a FROM Address a WHERE"
+                    + " a.street = :address", Address.class)
+                    .setParameter("address", address.getStreet());
+            Address entaddress = null;
+            try {
+                entaddress = query.getSingleResult();
+            } catch (NoResultException ex) {
+                entaddress = null;
+            }
 
             //Setting address
             if (entaddress == null) {
@@ -534,7 +542,15 @@ public class Facade implements FacadeInterface {
 
             //Checking if phone(s) exist    
             for (PhoneDTO phoneDTO : phones) {
-                Phone phoneToAdd = findPhone(phoneDTO);
+                TypedQuery<Phone> query2 = em.createQuery("SELECT p FROM Phone p WHERE "
+                        + " p.number = :number", Phone.class)
+                        .setParameter("number", phoneDTO.getNumber());
+                Phone phoneToAdd = null;
+                try {
+                    phoneToAdd = query2.getSingleResult();
+                } catch (NoResultException ex) {
+                    phoneToAdd = null;
+                }
                 //if phone doesn't exist we create it and add it to the person
                 if (phoneToAdd == null) {
                     phoneToAdd = new Phone(phoneDTO.getNumber(), phoneDTO.getDescription());
@@ -547,7 +563,15 @@ public class Facade implements FacadeInterface {
             }
             //Checking if hobby(s) exist
             for (HobbyDTO hobby_ : hobbys) {
-                Hobby hobbyToAdd = findHobby(hobby_);
+                TypedQuery<Hobby> query3 = em.createQuery("SELECT h FROM Hobby h WHERE"
+                        + " h.name = :hobby", Hobby.class)
+                        .setParameter("hobby", hobby_.getName());
+                Hobby hobbyToAdd = null;
+                try {
+                hobbyToAdd = query3.getSingleResult();
+                } catch (NoResultException ex) {
+                    hobbyToAdd = null;
+                }
                 System.out.println("HOBBY TO ADD : " + hobbyToAdd);
                 //if the hobby exists already we bind the person to the hobby and the hobby to the person
                 if (hobbyToAdd != null) {
@@ -583,7 +607,7 @@ public class Facade implements FacadeInterface {
 //        emf = EMF_Creator.createEntityManagerFactory(EMF_Creator.DbSelector.TEST, EMF_Creator.Strategy.CREATE);
 //        Facade pf = new Facade();
 //        PersonDTO person = new PersonDTO(new Person(3, "email2", "Asger", "Lesniak"));
-//        AddressDTO address = new AddressDTO(new Address("Testgade4", "ok sted"));
+//        AddressDTO address = new AddressDTO(new Address("Testgade", "dejligt sted"));
 //        List<HobbyDTO> hobby = new ArrayList();
 //        hobby.add(new HobbyDTO("Cykling", "Cykling på hold"));
 //        hobby.add(new HobbyDTO("Svømning", "Crawl"));

@@ -25,7 +25,7 @@ public class Hobby implements Serializable {
     private Long id;
     private String name;
     private String description;
-    @ManyToMany (mappedBy = "hobbys", fetch = FetchType.EAGER)
+    @ManyToMany (mappedBy = "hobbys", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     private List<Person> persons = new ArrayList<>();
 
 
