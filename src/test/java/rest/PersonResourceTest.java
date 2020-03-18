@@ -244,5 +244,41 @@ public class PersonResourceTest {
         //checking that the person has 3 phones now
         assertThat(result.getPhones().size(), equalTo(3));
     }
+    
+    @Test
+    public void testCreatePerson() {
+        Person person = new Person();
+        person.setEmail("email@email.com");
+        person.setLastName("Doe");
+        person.setFirstName("Jane");
+        person.setPersonid(35);
+        PersonDTO expResult = new PersonDTO(person);
+        PersonDTO result
+                = with()
+                        .body(expResult) //include object in body
+                        .contentType("application/json")
+                        .when().request("POST", "/person/Jane/Doe/35/email@email.com").then()
+                        .assertThat()
+                        .statusCode(HttpStatus.OK_200.getStatusCode())
+                        .extract()
+                        .as(PersonDTO.class); //extract result JSON as object
+        
+        //checking that we get the same personDTO back and we don't get an error.
+        assertThat((result.getFirstName()), equalTo(expResult.getFirstName()));
+        assertThat((result.getEmail()), equalTo(expResult.getEmail()));
+        assertThat((result.getLastName()), equalTo(expResult.getLastName()));
+        assertThat((result.getPersonid()), equalTo(expResult.getPersonid()));
+    }
+    
+    @Test
+    public void testFindPerson() {
+            given()
+                .contentType("application/json")
+                .get("/person/"+p1.getPersonid()).then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("firstName", equalTo("Gurli"))
+                .body("lastName", equalTo("Mogensen"));
+    }
        
 }
