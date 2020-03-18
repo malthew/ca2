@@ -1,5 +1,6 @@
 package facades;
 
+import dtos.AddressDTO;
 import dtos.CityInfoDTO;
 import dtos.HobbyDTO;
 import dtos.PersonDTO;
@@ -194,11 +195,11 @@ public class FacadeTest {
     }
     
     @Test
-    public void testCreatePersonWithNoExtraVal()  {
+    public void testCreatePersonWithNoExtraVal() throws NotFoundException  {
         Person persons = new Person(30, "email@email.com", "John", "Doe");
         facade.createPerson(new PersonDTO(persons));
-        List<PersonDTO> list = facade.findPerson("John");
-        assertTrue(list.get(0).getFirstName().equals("John"));
+        PersonDTO dtoperson = facade.findPerson(30);
+        assertTrue(dtoperson.getFirstName().equals("John"));
     }
     
     @Test
@@ -229,6 +230,74 @@ public class FacadeTest {
             fail("Expected a PersonNotFoundException to be thrown");
         } catch (AlreadyInOrderException ex) {
             assertThat(ex.getMessage(), is("Person already has a phone with that number"));
+        }
+    }
+    
+    @Test
+    public void testFindPerson() throws NotFoundException {
+        assertEquals(facade.findPerson(p1.getPersonid()).getFirstName(), new PersonDTO(p1).getFirstName());
+    }
+    
+    @Test
+    public void testFailFindPerson() throws NotFoundException {
+        Person p4 = p1;
+        p4.setPersonid(1626);
+        try {
+            PersonDTO pDTO = facade.findPerson(new PersonDTO(p4).getPersonid());
+            fail("No person found with this ID");
+        } catch (NotFoundException ex) {
+            assertThat(ex.getMessage(), is("No person found with this ID"));
+        }
+    }
+    
+    @Test
+    public void testFindAddress() throws NotFoundException {
+        assertEquals("Testgade", facade.findAddress(new AddressDTO(a1)).getStreet());
+    }
+    
+    @Test
+    public void testFailFindAddress() throws NotFoundException {
+        Address a4 = a1;
+        a1.setStreet("thiswillfail");
+        try {
+            AddressDTO a = facade.findAddress(new AddressDTO(a4));
+            fail("No address found");
+        } catch (NotFoundException ex) {
+            assertThat(ex.getMessage(), is("No address found"));
+        }
+    }
+    
+    @Test
+    public void testFindHobby() throws NotFoundException {
+        assertEquals("Cykling", facade.findHobby(new HobbyDTO(h1)).getName());
+    }
+    
+    @Test
+    public void testFailFindHobby() throws NotFoundException {
+        Hobby h4 = h1;
+        h4.setName("thiswillfail");
+        try {
+            HobbyDTO h = facade.findHobby(new HobbyDTO(h4));
+            fail("No hobby found");
+        } catch (NotFoundException ex) {
+            assertThat(ex.getMessage(), is("No hobby found"));
+        }
+    }
+    
+    @Test
+    public void testFindPhone() throws NotFoundException {
+        assertEquals(1234, facade.findPhone(new PhoneDTO(phone1)).getNumber());
+    }
+    
+    @Test
+    public void testFailFindPhone() throws NotFoundException {
+        Phone p4 = phone1;
+        p4.setNumber(12616212);
+        try {
+            PhoneDTO h = facade.findPhone(new PhoneDTO(p4));
+            fail("No phone found");
+        } catch (NotFoundException ex) {
+            assertThat(ex.getMessage(), is("No phone found"));
         }
     }
 

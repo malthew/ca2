@@ -133,7 +133,13 @@ public class Person implements Serializable {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
-    
+
+    @Override
+    public String toString() {
+        return "Person{" + "email=" + email + ", firstName=" + firstName + ", lastName=" + lastName + '}';
+    }
+
+        
     
 
     

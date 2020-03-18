@@ -178,93 +178,24 @@ public class Facade implements FacadeInterface {
         }
     }
 
-    public List<PersonDTO> findPerson(String firstName) {
+    public PersonDTO findPerson(long id) throws NotFoundException {
         EntityManager em = emf.createEntityManager();
         //Person person;
         try {
             em.getTransaction().begin();
             TypedQuery<Person> query = em.createQuery("SELECT p FROM Person p WHERE "
-                    + "p.firstName = :firstName", Person.class)
-                    .setParameter("firstName", firstName);
+                    + "p.personid = :id", Person.class)
+                    .setParameter("id", id);
             em.getTransaction().commit();
-            List<PersonDTO> list = new ArrayList();
-            for (Person person : query.getResultList()) {
-                list.add(new PersonDTO(person));
-            }
-            return list;
+            return new PersonDTO(query.getSingleResult());    
+        } catch (Exception ex) {
+            throw new NotFoundException("No person found with this ID");
         } finally {
             em.close();
         }
     }
 
-    // Not done 
-    public void createPersonWithInformations2(PersonDTO person, AddressDTO address, List<HobbyDTO> hobby, List<PhoneDTO> phone) throws AlreadyInUseException {
-        EntityManager em = emf.createEntityManager();
-
-        //Creating a Person entity
-        Person entperson = new Person();
-        entperson.setPersonid(person.getPersonid());
-        entperson.setEmail(person.getEmail());
-        entperson.setFirstName(person.getFirstName());
-        entperson.setLastName(person.getLastName());
-
-        em.getTransaction().begin();
-        //em.persist(entperson);
-        //Checking if address exist
-        Address entaddress = findAddress(address);
-
-        //Checking if phone(s) exist
-        try {
-            List<Phone> entphonelist = new ArrayList();
-            for (PhoneDTO phoneDTO : phone) {
-                Phone entphone = findPhone(phoneDTO);
-                entphonelist.add(entphone);
-            }
-            if (entphonelist.size() != phone.size()) {
-                throw new AlreadyInUseException("One of the phone numbers are already in use.");
-            }
-
-            //Checking if hobby(s) exist
-            List<Hobby> enthobbylist = new ArrayList();
-            for (HobbyDTO hobbys : hobby) {
-                enthobbylist.add(findHobby(hobbys));
-            }
-
-            //Setting address
-            if (entaddress == null) {
-                entaddress = new Address(address.getStreet(), address.getAdditionalInfo());
-                entperson.setAddress(entaddress);
-            } else {
-                entperson.setAddress(entaddress);
-            }
-
-            //Setting hobbies that already exists
-            entperson.setHobbys(enthobbylist);
-            //Setting remainding hobbies that needs to be created
-            List<Hobby> newHobbyList = new ArrayList();
-            for (Hobby hobby1 : enthobbylist) {
-                if (hobby1 != null) {
-                    for (HobbyDTO hobby2 : hobby) {
-                        if (hobby1.getName() != hobby2.getName()) {
-                            newHobbyList.add(hobby1);
-                        }
-                    }
-                }
-
-            }
-            //entperson.setHobbys(newHobbyList);
-            //Not sure if logic works ^
-
-            //Setting phones
-            entperson.setPhones(entphonelist);
-            em.persist(entperson);
-            em.getTransaction().commit();
-        } finally {
-            em.close();
-        }
-    }
-
-    public Address findAddress(AddressDTO address) {
+    public AddressDTO findAddress(AddressDTO address) throws NotFoundException {
         EntityManager em = emf.createEntityManager();
         Address entaddress = null;
         try {
@@ -274,15 +205,15 @@ public class Facade implements FacadeInterface {
                     .setParameter("address", address.getStreet());
             em.getTransaction().commit();
             entaddress = query.getSingleResult();
-            return entaddress;
+            return new AddressDTO(entaddress);
         } catch (Exception e) {
-            return entaddress;
+            throw new NotFoundException("No address found");
         } finally {
             em.close();
         }
     }
 
-    public Hobby findHobby(HobbyDTO hobby) {
+    public HobbyDTO findHobby(HobbyDTO hobby) throws NotFoundException {
         EntityManager em = emf.createEntityManager();
         Hobby enthobby = null;
         try {
@@ -292,27 +223,27 @@ public class Facade implements FacadeInterface {
                     .setParameter("hobby", hobby.getName());
             em.getTransaction().commit();
             enthobby = query.getSingleResult();
-            return enthobby;
+            return new HobbyDTO(enthobby);
         } catch (Exception e) {
-            return enthobby;
+            throw new NotFoundException("No hobby found");
         } finally {
             em.close();
         }
     }
 
-    public Phone findPhone(PhoneDTO phone) {
+    public PhoneDTO findPhone(PhoneDTO phone) throws NotFoundException {
         EntityManager em = emf.createEntityManager();
         Phone entphone = null;
         try {
             em.getTransaction().begin();
             TypedQuery<Phone> query = em.createQuery("SELECT p FROM Phone p WHERE "
                     + " p.number = :number", Phone.class)
-                    .setParameter("hobby", phone.getNumber());
+                    .setParameter("number", phone.getNumber());
             em.getTransaction().commit();
             entphone = query.getSingleResult();
-            return entphone;
+            return new PhoneDTO(entphone);
         } catch (Exception e) {
-            return entphone;
+            throw new NotFoundException("No phone found");
         } finally {
             em.close();
         }
