@@ -20,9 +20,7 @@ import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.util.HttpStatus;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
-import org.hamcrest.MatcherAssert;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
 import org.junit.jupiter.api.AfterAll;
@@ -175,7 +173,7 @@ public class PersonResourceTest {
                 = with()
                         .body(expResult) //include object in body
                         .contentType("application/json")
-                        .when().request("PUT", "/person/edit/phone/1234/9999/new_phone").then() //put REQUEST
+                        .when().request("PUT", "/person/phone/1234/9999/new_phone").then() //put REQUEST
                         .assertThat()
                         .statusCode(HttpStatus.OK_200.getStatusCode())
                         .extract()
@@ -200,7 +198,7 @@ public class PersonResourceTest {
                 = with()
                         .body(expResult) //include object in body
                         .contentType("application/json")
-                        .when().request("PUT", "/person/edit/hobby/Film/Løbe/new_hobby").then() //put REQUEST
+                        .when().request("PUT", "/person/hobby/Film/Løbe/new_hobby").then() //put REQUEST
                         .assertThat()
                         .statusCode(HttpStatus.OK_200.getStatusCode())
                         .extract()
@@ -225,7 +223,7 @@ public class PersonResourceTest {
                 = with()
                         .body(phoneToBeAdded) //include object in body
                         .contentType("application/json")
-                        .when().request("POST", "/person/add/phone/Gurli/Mogensen").then() //put REQUEST
+                        .when().request("POST", "/person/phone/Gurli/Mogensen").then() //put REQUEST
                         .assertThat()
                         .statusCode(HttpStatus.OK_200.getStatusCode())
                         .extract()

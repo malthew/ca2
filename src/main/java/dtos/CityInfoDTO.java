@@ -8,7 +8,7 @@ import java.util.List;
 public class CityInfoDTO {
     private int zipCode;
     private String city;
-    private List<AddressDTO> addresses;
+    private List<AddressDTO> addresses = new ArrayList<>();
     
     //Constructor for making personDTOs with data from the DB
     public CityInfoDTO(CityInfo cityInfo) {
@@ -22,6 +22,13 @@ public class CityInfoDTO {
         this.city = city;
         this.addresses = addresses;
     }
+
+    public CityInfoDTO(int zipCode, String city) {
+        this.zipCode = zipCode;
+        this.city = city;
+    }
+    
+    
     
     public int getZipCode() {
         return zipCode;
@@ -45,6 +52,10 @@ public class CityInfoDTO {
 
     public void setAddresses(List<AddressDTO> addresses) {
         this.addresses = addresses;
+    }
+    
+    public void addAddress(AddressDTO address){
+        this.addresses.add(address);
     }
 
     @Override

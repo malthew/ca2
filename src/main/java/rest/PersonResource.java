@@ -58,7 +58,7 @@ public class PersonResource {
     }
     
     @PUT
-    @Path("edit/phone/{oldNumber}/{newNumber}/{newDescription}")
+    @Path("phone/{oldNumber}/{newNumber}/{newDescription}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public PersonDTO editPersonPhone(PersonDTO person, @PathParam("oldNumber") int oldNumber,
@@ -75,7 +75,7 @@ public class PersonResource {
     }
     
     @PUT
-    @Path("edit/hobby/{oldHobbyName}/{newHobbyName}/{newDescription}")
+    @Path("hobby/{oldHobbyName}/{newHobbyName}/{newDescription}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public PersonDTO editPersonHobby(PersonDTO person, @PathParam("oldHobbyName") String oldHobbyName,
@@ -91,7 +91,7 @@ public class PersonResource {
     }
     
     @POST
-    @Path("add/phone/{firstName}/{lastName}")
+    @Path("phone/{firstName}/{lastName}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public PersonDTO addPhone(PhoneDTO phone, @PathParam("firstName") String firstName, @PathParam("lastName") String lastName) {
