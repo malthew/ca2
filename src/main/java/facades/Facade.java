@@ -1,5 +1,7 @@
 package facades;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import dtos.AddressDTO;
 import dtos.CityInfoDTO;
 import dtos.HobbyDTO;
@@ -570,6 +572,7 @@ public class Facade implements FacadeInterface {
         person.setHobbies(hobby);
         person.setPhones(phone);
         PersonDTO result = pf.createPersonWithInformations(person);
-        System.out.println(result);
+        Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+        System.out.println(GSON.toJson(result));
     }
 }

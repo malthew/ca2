@@ -1,5 +1,8 @@
 package rest;
 
+import dtos.AddressDTO;
+import dtos.CityInfoDTO;
+import dtos.HobbyDTO;
 import dtos.PersonDTO;
 import dtos.PhoneDTO;
 import entities.Address;
@@ -13,6 +16,8 @@ import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.with;
 import io.restassured.parsing.Parser;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.core.UriBuilder;
@@ -226,7 +231,7 @@ public class PersonResourceTest {
                 = with()
                         .body(phoneToBeAdded) //include object in body
                         .contentType("application/json")
-                        .when().request("POST", "/person/phone/Gurli/Mogensen").then() //put REQUEST
+                        .when().request("POST", "/person/phone/Gurli/Mogensen").then() //post REQUEST
                         .assertThat()
                         .statusCode(HttpStatus.OK_200.getStatusCode())
                         .extract()
@@ -243,6 +248,48 @@ public class PersonResourceTest {
         assertTrue(result.getPhones().stream().anyMatch(phoneDTO -> phoneDTO.getNumber() == 5678));
         //checking that the person has 3 phones now
         assertThat(result.getPhones().size(), equalTo(3));
+    }
+    
+    //@Test
+    public void testCreatePerson() {
+
+        PersonDTO personToBeAdded = new PersonDTO(new Person(3, "email2", "Asger", "Jansen"));
+        
+        AddressDTO address = new AddressDTO(new Address("Testgade 4", "dejligt sted"));
+        CityInfoDTO cityInfo = new CityInfoDTO(3000, "Ny by");
+        cityInfo.addAddress(address);
+        address.setCityInfo(cityInfo);
+        List<HobbyDTO> hobby = new ArrayList();
+        hobby.add(new HobbyDTO("Cykling", "Cykling på hold"));
+        hobby.add(new HobbyDTO("Svømning", "Crawl"));
+        List<PhoneDTO> phone = new ArrayList();
+        phone.add(new PhoneDTO(4444, "hjemmetelefon"));
+        phone.add(new PhoneDTO(5555, "mobil"));
+        personToBeAdded.setAddress(address);
+        personToBeAdded.setHobbies(hobby);
+        personToBeAdded.setPhones(phone);
+
+        PersonDTO result
+                = with()
+                        .body(personToBeAdded) //include object in body
+                        .contentType("application/json")
+                        .when().request("POST", "/person/create").then().log().body() //post REQUEST
+                        .assertThat()
+                        .statusCode(HttpStatus.OK_200.getStatusCode())
+                        .extract()
+                        .as(PersonDTO.class); //extract result JSON as object
+        
+        //checking that the person has the right name
+        assertThat((result.getFirstName()), equalTo("Asger"));
+        assertThat((result.getLastName()), equalTo("Jansen"));
+        //checking that the person has the right phone numbers
+        assertTrue(result.getPhones().stream().anyMatch(phoneDTO -> phoneDTO.getNumber() == 4444));
+        assertTrue(result.getPhones().stream().anyMatch(phoneDTO -> phoneDTO.getNumber() == 5555));      
+        //checking that the person has the right hobbies
+        assertTrue(result.getHobbies().stream().anyMatch(hobbyDTO -> hobbyDTO.getName().equals("Cykling")));
+        assertTrue(result.getHobbies().stream().anyMatch(hobbyDTO -> hobbyDTO.getName().equals("Svømning")));
+        //checking that the person has the right address
+        assertThat(result.getAddress().getStreet(), equalTo("Testgade 4"));       
     }
        
 }

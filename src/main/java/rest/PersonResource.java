@@ -6,9 +6,12 @@ import dtos.ExceptionDTO;
 import dtos.PersonDTO;
 import dtos.PhoneDTO;
 import exceptions.AlreadyInOrderException;
+import exceptions.AlreadyInUseException;
 import exceptions.NotFoundException;
 import facades.Facade;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -38,12 +41,12 @@ public class PersonResource {
     @GET
     @Path("phones/{firstname}/{lastname}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<PhoneDTO> getPhonesFromPerson(@PathParam("firstname") String firstname, @PathParam("lastname") String lastname) throws NotFoundException {
+    public String getPhonesFromPerson(@PathParam("firstname") String firstname, @PathParam("lastname") String lastname) throws NotFoundException {
         if (firstname == null || lastname == null) {
             throw new WebApplicationException("Not all required arguments included", 400);
         }
         try {
-        return FACADE.getPhonesFromPerson(firstname, lastname);
+        return GSON.toJson(FACADE.getPhonesFromPerson(firstname, lastname));
         }catch(NotFoundException ex){
             //Jeg ved ikke hvordan vi håndtere exceptions
             throw new WebApplicationException(ex.getMessage(), 400);
@@ -61,14 +64,14 @@ public class PersonResource {
     @Path("phone/{oldNumber}/{newNumber}/{newDescription}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public PersonDTO editPersonPhone(PersonDTO person, @PathParam("oldNumber") int oldNumber,
+    public String editPersonPhone(PersonDTO person, @PathParam("oldNumber") int oldNumber,
             @PathParam("newNumber") int newNumber,@PathParam("newDescription") String newDescription) throws NotFoundException {
         
         if (person.getFirstName() == null || person.getLastName() == null || oldNumber == 0 || newNumber == 0 || newDescription.isEmpty()) {
             throw new WebApplicationException("Not all required arguments included", 400);
         }
         try {
-        return FACADE.editPersonPhone(person.getFirstName(), person.getLastName(), oldNumber, newNumber, newDescription);
+        return GSON.toJson(FACADE.editPersonPhone(person.getFirstName(), person.getLastName(), oldNumber, newNumber, newDescription));
         }catch(NotFoundException ex){
             throw new WebApplicationException(ex.getMessage(), 400);
         }
@@ -78,13 +81,13 @@ public class PersonResource {
     @Path("hobby/{oldHobbyName}/{newHobbyName}/{newDescription}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public PersonDTO editPersonHobby(PersonDTO person, @PathParam("oldHobbyName") String oldHobbyName,
+    public String editPersonHobby(PersonDTO person, @PathParam("oldHobbyName") String oldHobbyName,
             @PathParam("newHobbyName") String newHobbyName,@PathParam("newDescription") String newDescription) throws NotFoundException {     
         if (person.getFirstName() == null || person.getLastName() == null || oldHobbyName.isEmpty() || newHobbyName.isEmpty() || newDescription.isEmpty()) {
             throw new WebApplicationException("Not all required arguments included", 400);
         }
         try {
-        return FACADE.editPersonHobby(person.getFirstName(), person.getLastName(), oldHobbyName, newHobbyName, newDescription);
+        return GSON.toJson(FACADE.editPersonHobby(person.getFirstName(), person.getLastName(), oldHobbyName, newHobbyName, newDescription));
         }catch(NotFoundException ex){
             throw new WebApplicationException(ex.getMessage(), 400);
         }
@@ -94,15 +97,32 @@ public class PersonResource {
     @Path("phone/{firstName}/{lastName}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public PersonDTO addPhone(PhoneDTO phone, @PathParam("firstName") String firstName, @PathParam("lastName") String lastName) {
+    public String addPhone(PhoneDTO phone, @PathParam("firstName") String firstName, @PathParam("lastName") String lastName) {
         if (firstName == null || lastName == null) {
             throw new WebApplicationException("Not all required arguments included", 400);
         }
         try {
-        return FACADE.addPhone(phone, firstName, lastName);
+        return GSON.toJson(FACADE.addPhone(phone, firstName, lastName));
         }catch(NotFoundException | AlreadyInOrderException ex){
             throw new WebApplicationException(ex.getMessage(), 400);
         }
     }
+    
+    @POST
+    @Path("create")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public String createPerson(PersonDTO person) {
+        if (person.getFirstName().isEmpty() || person.getLastName().isEmpty() || person.getAddress() == null) {
+            throw new WebApplicationException("Not all required arguments included", 400);
+        }
+        try {
+        return GSON.toJson(FACADE.createPersonWithInformations(person));
+        } catch (AlreadyInUseException ex) {
+            throw new WebApplicationException(ex.getMessage(), 400);
+        }
+    }
+    
+    
     
 }
