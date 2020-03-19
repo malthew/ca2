@@ -92,7 +92,7 @@ public class PhoneResourceTest {
 
             h1 = new Hobby("Cykling", "Cykling på hold");
             h2 = new Hobby("Film", "Gyserfilm");
-            h3 = new Hobby("Film", "Dramafilm");
+            h3 = new Hobby("Hockey", "Indendørs hockey");
 
             a1 = new Address("Testgade", "dejligt sted");
             a2 = new Address("Testvej", "fint sted");

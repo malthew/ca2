@@ -98,7 +98,7 @@ public class PersonResourceTest {
 
             h1 = new Hobby("Cykling", "Cykling på hold");
             h2 = new Hobby("Film", "Gyserfilm");
-            h3 = new Hobby("Film", "Dramafilm");
+            h3 = new Hobby("Hockey", "Indendørs hockey");
 
             a1 = new Address("Testgade", "dejligt sted");
             a2 = new Address("Testvej", "fint sted");
@@ -138,11 +138,6 @@ public class PersonResourceTest {
         } finally {
             em.close();
         }
-    }
-
-    @AfterEach
-    public void tearDown() {
-//        Remove any data after each test was run
     }
 
     @Test
@@ -287,14 +282,13 @@ public class PersonResourceTest {
                 .body("lastName", equalTo("Mogensen"));
     }
     
-    //@Test
+    @Test
     public void testCreatePersonWithInformation() {
 
         PersonDTO personToBeAdded = new PersonDTO(new Person(3, "email2", "Asger", "Jansen"));
 
         AddressDTO address = new AddressDTO(new Address("Testgade 4", "dejligt sted"));
         CityInfoDTO cityInfo = new CityInfoDTO(3000, "Ny by");
-        //cityInfo.addAddress(address);
         address.setCityInfo(cityInfo);
         List<HobbyDTO> hobby = new ArrayList();
         hobby.add(new HobbyDTO("Cykling", "Cykling på hold"));

@@ -16,18 +16,13 @@ public class CityInfoDTO {
         this.city = cityInfo.getCity();
     }
     
-    //Constructor for making PersonDTOs with data from a POST
-//    public CityInfoDTO(int zipCode, String city, List<AddressDTO> addresses) {
-//        this.zipCode = zipCode;
-//        this.city = city;
-//        this.addresses = addresses;
-//    }
-
     public CityInfoDTO(int zipCode, String city) {
         this.zipCode = zipCode;
         this.city = city;
     }
-    
+
+    public CityInfoDTO() {
+    }
     
     
     public int getZipCode() {
@@ -45,23 +40,6 @@ public class CityInfoDTO {
     public void setCity(String city) {
         this.city = city;
     }
-
-//    public List<AddressDTO> getAddresses() {
-//        return addresses;
-//    }
-//
-//    public void setAddresses(List<AddressDTO> addresses) {
-//        this.addresses = addresses;
-//    }
-//    
-//    public void addAddress(AddressDTO address){
-//        this.addresses.add(address);
-//    }
-//
-//    @Override
-//    public String toString() {
-//        return "CityInfoDTO{" + "zipCode=" + zipCode + ", city=" + city + ", addresses=" + addresses + '}';
-//    }
 
     @Override
     public String toString() {

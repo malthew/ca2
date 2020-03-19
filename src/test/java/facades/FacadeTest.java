@@ -78,7 +78,7 @@ public class FacadeTest {
 
             h1 = new Hobby("Cykling", "Cykling på hold");
             h2 = new Hobby("Film", "Gyserfilm");
-            h3 = new Hobby("Film", "Dramafilm");
+            h3 = new Hobby("Hockey", "Indendørs hockey");
 
             a1 = new Address("Testgade", "dejligt sted");
             a2 = new Address("Testvej", "fint sted");
@@ -186,7 +186,7 @@ public class FacadeTest {
     
     @Test
     public void testCountFromHobby()  {
-        assertEquals(2, facade.countFromHobby("Film"));
+        assertEquals(1, facade.countFromHobby("Film"));
     }
     
     @Test
@@ -207,7 +207,7 @@ public class FacadeTest {
     
     @Test
     public void testGetAllPersonsWithHobby() throws NotFoundException {
-        assertThat(facade.getAllPersonsWithHobby("Film"), hasSize(2));
+        assertThat(facade.getAllPersonsWithHobby("Film"), hasSize(1));
     }
     
     @Test
