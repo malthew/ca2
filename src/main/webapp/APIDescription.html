@@ -60,19 +60,19 @@ and open the template in the editor.
                     <td>/api/person/create</td>
                     <td>Person (1)</td>
                     <td>Person (1)</td>
-                    <td>(e3)</td>
+                    <td>(e3)(e7)</td>
                 </tr>
                 <tr>
                     <td>PUT</td>
-                    <td>/api/person/edit/phone/{oldNumber}/{newNumber}/{newDescription}</td>
-                    <td>Person (1)</td>
+                    <td>/api/person/phone/{oldNumber}/{newNumber}/{newDescription}</td>
+                    <td>Person (4)</td>
                     <td>Person (2)</td>
                     <td>(e4)(e5)(e6)(e7)</td>
                 </tr>
                 <tr>
                     <td>PUT</td>
-                    <td>/api/person/edit/hobby/{oldHobbyName}/{newHobbyName}/{newDescription}</td>
-                    <td>Person (1)</td>
+                    <td>/api/person/hobby/{oldHobbyName}/{newHobbyName}/{newDescription}</td>
+                    <td>Person (4)</td>
                     <td>Person (3)</td>
                     <td>(e4)(e5)(e6)(e7)</td>
                 </tr>
@@ -85,7 +85,7 @@ and open the template in the editor.
                 </tr>
                 <tr>
                     <td>POST</td>
-                    <td>/api/person/add/phone/{firstname}/{lastname}</td>
+                    <td>/api/person/phone/{firstname}/{lastname}</td>
                     <td> Phone (1)</td>
                     <td>Person (2)</td>
                     <td>(e5)(e6)(e7)(e9)(e10)</td>
@@ -95,11 +95,12 @@ and open the template in the editor.
             <h3>Request Body and Response Formats</h3>
             <h4>(1) Person format</h4>
              <p>   { <br>
+                 "personid": Number <br>
                 "email": String <br>
                 "firstName": String <br>
                 "lastName": String <br>
                 "phones": [Phone, Phone, ...] (1) <br>
-                "address": { "street": String, "additional info": String, "persons": [person, person, ...]} <br>
+                "address": { "street": String, "additionalInfo": String} <br>
                 "hobbies": [Hobby, Hobby, ...] (1) <br>
             }</p>
             <h4>(2) Person format</h4>
@@ -115,6 +116,11 @@ and open the template in the editor.
                 "firstName": String <br>
                 "lastName": String <br>
                 "hobbies": [Hobby, Hobby, ...] (1) <br>
+            }</p>
+             <h4>(4) Person format</h4>
+             <p>   { <br>
+                "firstName": String <br>
+                "lastName": String <br>
             }</p>
              <h4>(1) Phone format</h4>
             <p>   { <br>
@@ -134,7 +140,7 @@ and open the template in the editor.
             <ul style="list-style-type:circle;">
                 <li>(e1) :{ status : 400, "msg": "No persons found with this hobby" }</li>
                 <li>(e2) :{ status : 400, "msg": "No persons found living in this city" }</li>
-                <li>(e3) :{ status : 400, "msg": "Field ‘xxx’ is required" } (for example, no name provided)</li>
+                <li>(e3) :{ status : 400, "msg": "One of the phone numbers are already in use." }</li>
                 <li>(e4) :{ status : 400, "msg": "Person you are trying to edit cannot be found" }</li>
                 <li>(e5) :{ status : 400, "msg": "Person with given name could not be found" }</li>
                 <li>(e6) :{ status : 400, "msg": "Multiple people with same name and last name found, cannot proceed with editing" }</li>
