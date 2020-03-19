@@ -173,7 +173,7 @@ const createNewUser = function () {
     let newUser = {"firstName": firstname, "lastName": lastname, "email": email, "personid": personid};
 
     let options = makeOptions('POST', newUser);
-    fetch('/api/person/createperson', options)
+    fetch('/ca2/api/person/createperson', options)
             .then(function (response) {
                 return response.json();
             })
@@ -203,25 +203,25 @@ const createNewUser = function () {
 const findPerson = function () {
     let personid = document.getElementById("pid").value;
     let url = "/ca2/api/person/" + personid;
-    fetch(url)
-            .then(res => res.json())
-            .then(data => {
-//                if (data.status) {
-//                    console.error('Fail:', data);
-                if (data.code === 400) {
-                    document.getElementById("find_Response").innerHTML = "<br><p>No person was found with this ID</p>";
-                } else if (data.code === 500) {
-                    document.getElementById("find_Response").innerHTML = "<br><p>An error has occured, please try again at a later time.</p>";
-                } else {
-                    console.log("data", data);
-                    linksDiv.innerHTML = personTable(data);
-                }
-            });
+    if (personid === "") {
+        document.getElementById("find_Response").innerHTML = "<br><p>Please enter a ID in the input field.</p>";
+    } else {
+        fetch(url)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.code === 400) {
+                        document.getElementById("find_Response").innerHTML = "<br><p>No person was found with this ID</p>";
+                    } else if (data.code === 500) {
+                        document.getElementById("find_Response").innerHTML = "<br><p>An error has occured, please try again at a later time.</p>";
+                    } else {
+                        console.log("data", data);
+                        linksDiv.innerHTML = personTable(data);
+                    }
+                });
+    }
 }
 
 function personTable(person) {
-//    //var tableinfo = person.map(x => `<tr><td>  ${x.personid} </td><td> ${x.email} </td><td> ${x.firstName} </td>
-//    //<td>  ${x.lastName} </tr>`);
     var tableinfo = "<table id=\"indextable\" class=\"table\">" +
             "<tr><th>Person ID</th>" +
             "<th>Email</th>" +

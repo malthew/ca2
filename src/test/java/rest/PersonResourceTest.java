@@ -258,7 +258,7 @@ public class PersonResourceTest {
                 = with()
                         .body(expResult) //include object in body
                         .contentType("application/json")
-                        .when().request("POST", "/person/createperson").then()
+                        .when().request("POST", "/person/createnormal").then()
                         .assertThat()
                         .statusCode(HttpStatus.OK_200.getStatusCode())
                         .extract()
