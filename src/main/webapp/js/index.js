@@ -119,7 +119,8 @@ function createPhoneButtons() {
     let b1 = "<button type=\"submit\" id=\"findPhone\">Find Phone</button>";
     let b2 = "<button type=\"submit\" id=\"createPhone\">Create Phone</button>";
     let b3 = "<button type=\"submit\" onclick=\"createInputFieldsFindPhoneByName()\">Find Phones By Name</button>";
-    linksDiv.innerHTML = b1 + b2 + b3;
+    let b4 = "<button type=\"submit\" onclick=\"createInputFieldsEditPhone()\">Edit Phone</button>";
+    linksDiv.innerHTML = b1 + b2 + b3 + b4;
 }
 
 function createInputFieldsFindPhoneByName() {
@@ -129,7 +130,25 @@ function createInputFieldsFindPhoneByName() {
             "<input type=\"text\" id=\"lname\" name=\"lname\"><br>" +
             "<button type=\"button\" onclick=\"findPhoneByName()\" class=\"btn btn-primary\">Find Phones</button>" +
             "</form> ";
-    linksDiv.innerHTML = form;
+    let response = "<p id=\"find_Response\"></p>";
+    linksDiv.innerHTML = form + response;
+}
+
+function createInputFieldsEditPhone() {
+    let form = "<form><label for=\"fname\">First name:</label><br>" +
+            "<input type=\"text\" id=\"fname\" name=\"fname\"><br>" +
+            "<label for=\"lname\">Last name:</label><br>" +
+            "<input type=\"text\" id=\"lname\" name=\"lname\"><br>" +
+            "<label for=\"oldnumber\">Number to edit:</label><br>" +
+            "<input type=\"text\" id=\"oldnumber\" name=\"oldnumber\"><br>" +
+            "<label for=\"newnumber\">New Number:</label><br>" +
+            "<input type=\"text\" id=\"newnumber\" name=\"newnumber\"><br>" +
+            "<label for=\"newdescription\">New Description (One word):</label><br>" +
+            "<input type=\"text\" id=\"newdescription\" name=\"newdescription\"><br>" +
+            "<button type=\"button\" onclick=\"editPhone()\" class=\"btn btn-primary\">Edit Phone</button>" +
+            "</form> ";
+    let response = "<p id=\"edit_Response\"></p>";
+    linksDiv.innerHTML = form + response;
 }
 
 /*---------------------------------------------*/
@@ -269,17 +288,56 @@ function findPhoneByName() {
             .then(res => res.json())
             .then(data => {
                 console.log("data", data);
-                //if the data has property "code" it's en error and we can't pass it to the function
-                if (data.hasOwnProperty("code")) {
-                    content.innerHTML = JSON.stringify(data);
+                if (data.code === 400) {
+                    console.error('Fail:', data);
+                    document.getElementById("find_Response").innerHTML = data.message;
+                } else if (data.code === 500) {
+                    document.getElementById("find_Response").innerHTML = "<br><p>An error has occured, please try again at a later time.</p>";
                 } else {
-                    content.innerHTML = phonesToTable(data);
+                    document.getElementById("find_Response").innerHTML = phonesToTable(data);
                 }
             });
 }
 
 /*---------------------------------------------*/
 /*----------- End Find Phone By Name ----------*/
+/*---------------------------------------------*/
+
+
+/*---------------------------------------------*/
+/*------------- Begin Edit Phone --------------*/
+/*---------------------------------------------*/
+
+function editPhone() {
+    let firstName = document.querySelector("#fname").value;
+    let lastName = document.querySelector("#lname").value;
+    let oldNumber = document.querySelector("#oldnumber").value;
+    let newNumber = document.querySelector("#newnumber").value;
+    let newDescription = document.querySelector("#newdescription").value;
+    let user = {"firstName": firstName, "lastName": lastName};
+    let options = makeOptions('PUT', user);
+    let url = "/ca2/api/person/phone/" + oldNumber + "/" + newNumber + "/" + newDescription;
+
+    fetch(url, options)
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                if (data.code === 400) {
+                    console.error('Fail:', data);
+                    document.getElementById("edit_Response").innerHTML = data.message;
+                } else if (data.code === 500) {
+                    document.getElementById("edit_Response").innerHTML = "<br><p>An error has occured, please try again at a later time.</p>";
+                } else {
+                    console.log('Success:', data);
+                    document.getElementById("edit_Response").innerHTML = "Phone with number: " + newNumber + " was added to "
+                            + firstName + " " + lastName + " and phone with number: " + oldNumber + " was removed.";
+                }
+            });
+}
+
+/*---------------------------------------------*/
+/*-------------- End Edit Phone ---------------*/
 /*---------------------------------------------*/
 
 
