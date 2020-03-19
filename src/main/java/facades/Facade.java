@@ -164,7 +164,7 @@ public class Facade implements FacadeInterface {
         }
     }
 
-    public void createPerson(PersonDTO person) {
+    public PersonDTO createPerson(PersonDTO person) {
         EntityManager em = emf.createEntityManager();
         Person entperson = new Person();
         entperson.setPersonid(person.getPersonid());
@@ -175,6 +175,7 @@ public class Facade implements FacadeInterface {
             em.getTransaction().begin();
             em.persist(entperson);
             em.getTransaction().commit();
+            return person;
         } finally {
             em.close();
         }

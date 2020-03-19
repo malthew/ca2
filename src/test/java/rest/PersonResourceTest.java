@@ -38,17 +38,18 @@ import org.junit.jupiter.api.Test;
 import utils.EMF_Creator;
 
 public class PersonResourceTest {
+
     private static final int SERVER_PORT = 7777;
     private static final String SERVER_URL = "http://localhost/api";
     private static Facade facade;
     private EntityManager em;
-    
+
     private Person p1, p2;
     private Hobby h1, h2, h3;
     private Address a1, a2;
     private CityInfo c1, c2;
     private Phone phone1, phone2, phone3;
-    
+
     static final URI BASE_URI = UriBuilder.fromUri(SERVER_URL).port(SERVER_PORT).build();
     private static HttpServer httpServer;
     private static EntityManagerFactory emf;
@@ -63,22 +64,22 @@ public class PersonResourceTest {
         //This method must be called before you request the EntityManagerFactory
         EMF_Creator.startREST_TestWithDB();
         emf = EMF_Creator.createEntityManagerFactory(EMF_Creator.DbSelector.TEST, EMF_Creator.Strategy.CREATE);
-        
+
         httpServer = startServer();
         //Setup RestAssured
         RestAssured.baseURI = SERVER_URL;
         RestAssured.port = SERVER_PORT;
         RestAssured.defaultParser = Parser.JSON;
     }
-    
+
     @AfterAll
-    public static void closeTestServer(){
+    public static void closeTestServer() {
         //System.in.read();
-         //Don't forget this, if you called its counterpart in @BeforeAll
-         EMF_Creator.endREST_TestWithDB();
-         httpServer.shutdownNow();
+        //Don't forget this, if you called its counterpart in @BeforeAll
+        EMF_Creator.endREST_TestWithDB();
+        httpServer.shutdownNow();
     }
-    
+
     @BeforeEach
     public void setUp() {
         em = emf.createEntityManager();
@@ -138,18 +139,18 @@ public class PersonResourceTest {
             em.close();
         }
     }
-    
+
     @AfterEach
     public void tearDown() {
 //        Remove any data after each test was run
     }
-    
+
     @Test
     public void testServerIsUp() {
         System.out.println("Testing is server UP");
         given().when().get("/person").then().statusCode(200);
     }
-    
+
     @Test
     public void testGetPhonesFromPerson() {
         given()
@@ -160,7 +161,7 @@ public class PersonResourceTest {
                 .body("description", hasItems("mobil", "hjemmetelefon"))
                 .body("number", hasItems(1234, 5678));
     }
-    
+
     @Test
     public void testGetPhonesFromPersonWrongName() {
         given()
@@ -171,7 +172,7 @@ public class PersonResourceTest {
                 .body("code", equalTo(400))
                 .body("message", equalTo("Bad Request"));
     }
-    
+
     @Test
     public void testEditPersonPhone() {
 
@@ -186,7 +187,7 @@ public class PersonResourceTest {
                         .statusCode(HttpStatus.OK_200.getStatusCode())
                         .extract()
                         .as(PersonDTO.class); //extract result JSON as object
-        
+
         //checking that nothing has changed that we don't want to change
         assertThat((result.getFirstName()), equalTo(expResult.getFirstName()));
         assertThat((result.getLastName()), equalTo(expResult.getLastName()));
@@ -196,7 +197,7 @@ public class PersonResourceTest {
         //checking that the person does not have the old number anymore
         assertFalse(result.getPhones().stream().anyMatch(phoneDTO -> phoneDTO.getNumber() == 1234));
     }
-    
+
     @Test
     public void testEditPersonHobby() {
 
@@ -211,7 +212,7 @@ public class PersonResourceTest {
                         .statusCode(HttpStatus.OK_200.getStatusCode())
                         .extract()
                         .as(PersonDTO.class); //extract result JSON as object
-        
+
         //checking that nothing has changed that we don't want to change
         assertThat((result.getFirstName()), equalTo(expResult.getFirstName()));
         assertThat((result.getLastName()), equalTo(expResult.getLastName()));
@@ -221,7 +222,7 @@ public class PersonResourceTest {
         //checking that the person does not have the old hobby anymore
         assertFalse(result.getHobbies().stream().anyMatch(hobbyDTO -> hobbyDTO.getName().equals("Film")));
     }
-    
+
     @Test
     public void testAddPhone() {
 
@@ -236,7 +237,7 @@ public class PersonResourceTest {
                         .statusCode(HttpStatus.OK_200.getStatusCode())
                         .extract()
                         .as(PersonDTO.class); //extract result JSON as object
-        
+
         //checking that nothing has changed that we don't want to change
         assertThat((result.getFirstName()), equalTo("Gurli"));
         assertThat((result.getLastName()), equalTo("Mogensen"));
@@ -249,12 +250,48 @@ public class PersonResourceTest {
         //checking that the person has 3 phones now
         assertThat(result.getPhones().size(), equalTo(3));
     }
+
+    @Test
+    public void testCreatePerson2() {
+        Person person = new Person();
+        person.setEmail("email@email.com");
+        person.setLastName("Doe");
+        person.setFirstName("Jane");
+        person.setPersonid(35);
+        PersonDTO expResult = new PersonDTO(person);
+        PersonDTO result
+                = with()
+                        .body(expResult) //include object in body
+                        .contentType("application/json")
+                        .when().request("POST", "/person/Jane/Doe/35/email@email.com").then()
+                        .assertThat()
+                        .statusCode(HttpStatus.OK_200.getStatusCode())
+                        .extract()
+                        .as(PersonDTO.class); //extract result JSON as object
+
+        //checking that we get the same personDTO back and we don't get an error.
+        assertThat((result.getFirstName()), equalTo(expResult.getFirstName()));
+        assertThat((result.getEmail()), equalTo(expResult.getEmail()));
+        assertThat((result.getLastName()), equalTo(expResult.getLastName()));
+        assertThat((result.getPersonid()), equalTo(expResult.getPersonid()));
+    }
+
+    @Test
+    public void testFindPerson() {
+        given()
+                .contentType("application/json")
+                .get("/person/" + p1.getPersonid()).then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("firstName", equalTo("Gurli"))
+                .body("lastName", equalTo("Mogensen"));
+    }
     
     //@Test
     public void testCreatePerson() {
 
         PersonDTO personToBeAdded = new PersonDTO(new Person(3, "email2", "Asger", "Jansen"));
-        
+
         AddressDTO address = new AddressDTO(new Address("Testgade 4", "dejligt sted"));
         CityInfoDTO cityInfo = new CityInfoDTO(3000, "Ny by");
         cityInfo.addAddress(address);
@@ -278,18 +315,18 @@ public class PersonResourceTest {
                         .statusCode(HttpStatus.OK_200.getStatusCode())
                         .extract()
                         .as(PersonDTO.class); //extract result JSON as object
-        
+
         //checking that the person has the right name
         assertThat((result.getFirstName()), equalTo("Asger"));
         assertThat((result.getLastName()), equalTo("Jansen"));
         //checking that the person has the right phone numbers
         assertTrue(result.getPhones().stream().anyMatch(phoneDTO -> phoneDTO.getNumber() == 4444));
-        assertTrue(result.getPhones().stream().anyMatch(phoneDTO -> phoneDTO.getNumber() == 5555));      
+        assertTrue(result.getPhones().stream().anyMatch(phoneDTO -> phoneDTO.getNumber() == 5555));
         //checking that the person has the right hobbies
         assertTrue(result.getHobbies().stream().anyMatch(hobbyDTO -> hobbyDTO.getName().equals("Cykling")));
         assertTrue(result.getHobbies().stream().anyMatch(hobbyDTO -> hobbyDTO.getName().equals("Svømning")));
         //checking that the person has the right address
-        assertThat(result.getAddress().getStreet(), equalTo("Testgade 4"));       
+        assertThat(result.getAddress().getStreet(), equalTo("Testgade 4"));
     }
-       
+
 }
