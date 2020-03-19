@@ -8,6 +8,20 @@ let addressButton = document.querySelector("#Address");
 let hobbyButton = document.querySelector("#Hobby");
 let phoneButton = document.querySelector("#Phone");
 
+function makeOptions(method, body) {
+    var opts = {
+        method: method,
+        headers: {
+            "Content-type": "application/json",
+            "Accept": "application/json"
+        }
+    }
+    if (body) {
+        opts.body = JSON.stringify(body);
+    }
+    return opts;
+}
+
 /*---------------------------------------------*/
 /*------------- Begin Create Buttons ----------*/
 /*---------------------------------------------*/
@@ -20,7 +34,7 @@ personButton.onclick = function (e) {
     createPersonButtons();
 };
 function createPersonButtons() {
-    let b1 = "<button type=\"submit\" id=\"findPerson\">Find Person</button>";
+    let b1 = "<button type=\"submit\" onclick=\"createInputFieldsFindPerson()\">Find Person</button>";
     let b2 = "<button type=\"submit\" onclick=\"createInputFieldsCreatePerson()\">Create Person</button>";
     linksDiv.innerHTML = b1 + b2;
 }
@@ -34,9 +48,20 @@ function createInputFieldsCreatePerson() {
             "<input type=\"text\" id=\"email\" name=\"email\"><br>" +
             "<label for=\"pid\">Person ID:</label><br>" +
             "<input type=\"text\" id=\"pid\" name=\"pid\" ><br><br>" +
-            "<button type=\"button\" class=\"btn btn-primary\">Create Person</button>"+
-            "</form> "
-    linksDiv.innerHTML = form;
+            "<button type=\"button\" class=\"btn btn-primary\" onclick=\"createNewUser()\">Create Person</button>" +
+            "</form> ";
+    let response = "<p id=\"creation_Response\"></p>";
+    linksDiv.innerHTML = form + response;
+}
+
+function createInputFieldsFindPerson() {
+    let form = "<form>" +
+            "<label for=\"pid\">Person ID:</label><br>" +
+            "<input type=\"text\" id=\"pid\" name=\"pid\" ><br><br>" +
+            "<button type=\"button\" class=\"btn btn-primary\" onclick=\"findPerson()\">Find Person</button>" +
+            "</form> ";
+    let response = "<p id=\"find_Response\"></p>";
+    linksDiv.innerHTML = form + response;
 }
 
 /*---------------------------------------------*/
@@ -110,6 +135,31 @@ function createPhoneButtons() {
 /*------------ Begin Create Person ------------*/
 /*---------------------------------------------*/
 
+const createNewUser = function () {
+    let firstname = document.getElementById("fname").value;
+    let lastname = document.getElementById("lname").value;
+    let email = document.getElementById("email").value;
+    let personid = document.getElementById("pid").value;
+    let newUser = {"firstName": firstname, "lastName": lastname, "email": email, "personid": personid};
+
+    let options = makeOptions('POST', newUser);
+    fetch('/api/person/createperson', options)
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                if (data.code === 400) {
+                    console.error('Fail:', data);
+                    document.getElementById("creation_Response").innerHTML = data.msg;
+                } else if (data.code === 500) {
+                    document.getElementById("find_Response").innerHTML = "<br><p>An error has occured, please try again at a later time.</p>";
+                } else {
+                    console.log('Success:', data);
+                    document.getElementById("creation_Response").innerHTML = firstname + " was added as " + data.id;
+                }
+            });
+};
+
 /*---------------------------------------------*/
 /*------------- End Create Person -------------*/
 /*---------------------------------------------*/
@@ -120,6 +170,38 @@ function createPhoneButtons() {
 /*------------- Begin Find Person -------------*/
 /*---------------------------------------------*/
 
+const findPerson = function () {
+    let personid = document.getElementById("pid").value;
+    let url = "/ca2/api/person/" + personid;
+    fetch(url)
+            .then(res => res.json())
+            .then(data => {
+//                if (data.status) {
+//                    console.error('Fail:', data);
+                if (data.code === 400) {
+                    document.getElementById("find_Response").innerHTML = "<br><p>No person was found with this ID</p>";
+                } else if (data.code === 500) {
+                    document.getElementById("find_Response").innerHTML = "<br><p>An error has occured, please try again at a later time.</p>";
+                } else {
+                    console.log("data", data);
+                    linksDiv.innerHTML = personTable(data);
+                }
+            });
+}
+
+function personTable(person) {
+//    //var tableinfo = person.map(x => `<tr><td>  ${x.personid} </td><td> ${x.email} </td><td> ${x.firstName} </td>
+//    //<td>  ${x.lastName} </tr>`);
+    var tableinfo = "<table id=\"indextable\" class=\"table\">" +
+            "<tr><th>Person ID</th>" +
+            "<th>Email</th>" +
+            "<th>First Name</th>" +
+            "<th>Last Name</th></tr>" +
+            "<tr><td>" + person.personid + "</td><td>" + person.email + "</td><td>" + person.firstName + "</td>" +
+            "<td>" + person.lastName + "</tr></table>";
+    return tableinfo;
+
+}
 
 /*---------------------------------------------*/
 /*-------------- End Find Person --------------*/
