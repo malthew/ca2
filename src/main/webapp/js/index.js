@@ -17,12 +17,27 @@ let phoneButton = document.querySelector("#Phone");
 personButton.onclick = function (e) {
     e.preventDefault();
     clearDivs();
-    function createPersonButtons() {
-        let b1 = "<button type=\"submit\" id=\"findPerson\">Find Person</button>";
-        let b2 = "<br><button type=\"submit\" id=\"createPerson\">Create Person</button>";
-        linksDiv.innerHTML = b1 + b2;
-    }
+    createPersonButtons();
 };
+function createPersonButtons() {
+    let b1 = "<button type=\"submit\" id=\"findPerson\">Find Person</button>";
+    let b2 = "<button type=\"submit\" onclick=\"createInputFieldsCreatePerson()\">Create Person</button>";
+    linksDiv.innerHTML = b1 + b2;
+}
+
+function createInputFieldsCreatePerson() {
+    let form = "<form><label for=\"fname\">First name:</label><br>" +
+            "<input type=\"text\" id=\"fname\" name=\"fname\"><br>" +
+            "<label for=\"lname\">Last name:</label><br>" +
+            "<input type=\"text\" id=\"lname\" name=\"lname\"><br>" +
+            "<label for=\"email\">Email:</label><br>" +
+            "<input type=\"text\" id=\"email\" name=\"email\"><br>" +
+            "<label for=\"pid\">Person ID:</label><br>" +
+            "<input type=\"text\" id=\"pid\" name=\"pid\" ><br><br>" +
+            "<button type=\"button\" class=\"btn btn-primary\">Create Person</button>"+
+            "</form> "
+    linksDiv.innerHTML = form;
+}
 
 /*---------------------------------------------*/
 /*--------- End Create Button Person ----------*/
@@ -35,12 +50,13 @@ personButton.onclick = function (e) {
 addressButton.onclick = function (e) {
     e.preventDefault();
     clearDivs();
-    function createAddressButtons() {
-        let b1 = "<button type=\"submit\" id=\"findAddress\">Find Address</button>";
-        let b2 = "<br><button type=\"submit\" id=\"createAddress\">Create Address</button>";
-        linksDiv.innerHTML = b1 + b2;
-    }
+    createAddressButtons();
 };
+function createAddressButtons() {
+    let b1 = "<button type=\"submit\" id=\"findAddress\">Find Address</button>";
+    let b2 = "<button type=\"submit\" id=\"createAddress\">Create Address</button>";
+    linksDiv.innerHTML = b1 + b2;
+}
 
 /*---------------------------------------------*/
 /*-------- End Create Button Address ----------*/
@@ -53,12 +69,13 @@ addressButton.onclick = function (e) {
 hobbyButton.onclick = function (e) {
     e.preventDefault();
     clearDivs();
-    function createHobbyButtons() {
-        let b1 = "<button type=\"submit\" id=\"findHobby\">Find Hobby</button>";
-        let b2 = "<br><button type=\"submit\" id=\"createHobby\">Create Hobby</button>";
-        linksDiv.innerHTML = b1 + b2;
-    }
+    createHobbyButtons();
 };
+function createHobbyButtons() {
+    let b1 = "<button type=\"submit\" id=\"findHobby\">Find Hobby</button>";
+    let b2 = "<button type=\"submit\" id=\"createHobby\">Create Hobby</button>";
+    linksDiv.innerHTML = b1 + b2;
+}
 
 /*---------------------------------------------*/
 /*--------- End Create Button Hobby -----------*/
@@ -71,12 +88,13 @@ hobbyButton.onclick = function (e) {
 phoneButton.onclick = function (e) {
     e.preventDefault();
     clearDivs();
-    function createPhoneButtons() {
-        let b1 = "<button type=\"submit\" id=\"findPhone\">Find Phone</button>";
-        let b2 = "<br><button type=\"submit\" id=\"createPhone\">Create Phone</button>";
-        linksDiv.innerHTML = b1 + b2;
-    }
+    createPhoneButtons();
 };
+function createPhoneButtons() {
+    let b1 = "<button type=\"submit\" id=\"findPhone\">Find Phone</button>";
+    let b2 = "<button type=\"submit\" id=\"createPhone\">Create Phone</button>";
+    linksDiv.innerHTML = b1 + b2;
+}
 
 /*---------------------------------------------*/
 /*---------- End Create Button Phone ----------*/
@@ -91,7 +109,6 @@ phoneButton.onclick = function (e) {
 /*---------------------------------------------*/
 /*------------ Begin Create Person ------------*/
 /*---------------------------------------------*/
-
 
 /*---------------------------------------------*/
 /*------------- End Create Person -------------*/
