@@ -6,6 +6,7 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+        
 
         <!--importing CSS-->
         <link rel="stylesheet" href="css/indexcss.css">
@@ -21,9 +22,19 @@
                 <button id="groupPage" type="button" class="btn btn-primary">Group</button>
             </div>
             <div class="btn-group">
-                <button type="button" class="btn btn-primary" onclick="window.location.href = 'https://mastwo.codes/ca2/groupinfo.html';">Group Contract / who did what</button>
+                <button type="button" class="btn btn-primary" onclick="window.location.href = '/ca2/groupinfo.html';">Group Contract / who did what</button>
+            </div>
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary" onclick="window.location.href = '/ca2/APIDescription.html';">API Description</button>
             </div>
         </div>
+        <div class="wrapper">
+        <button type="button" id="Person" class="btn btn-dark">Person</button>
+        <button type="button" id="Address" class="btn btn-dark">Address</button>
+        <button type="button" id="Hobby" class="btn btn-dark">Hobby</button>
+        <button type="button" id="Phone" class="btn btn-dark">Phone</button>
+        </div>
+        
         <h1 id="h1content"></h1>
         <h3 id="h3content"></h3>
         <div id="content"></div>
