@@ -2,17 +2,12 @@ package rest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import dtos.AddressDTO;
-import dtos.ExceptionDTO;
 import dtos.PersonDTO;
 import dtos.PhoneDTO;
 import exceptions.AlreadyInOrderException;
 import exceptions.AlreadyInUseException;
 import exceptions.NotFoundException;
 import facades.Facade;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
