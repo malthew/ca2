@@ -106,7 +106,7 @@ public class PersonResource {
     }
 
     @POST
-    @Path("/{firstName}/{lastName}/{personId}/{email}")
+    @Path("createperson")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public String createPerson(PersonDTO person) {
