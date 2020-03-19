@@ -48,5 +48,16 @@ public class HobbyResource {
         }
         
     }
+    
+    @GET
+    @Path("persons/{name}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getAllPersonsWithHobby(@PathParam("name") String hobbyName) {
+        try {
+            return GSON.toJson(FACADE.getAllPersonsWithHobby(hobbyName));
+        } catch (NotFoundException ex) {
+            throw new WebApplicationException(ex.getMessage(), 400);
+        }
+    }
 
 }

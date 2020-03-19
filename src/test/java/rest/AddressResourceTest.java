@@ -144,5 +144,16 @@ public class AddressResourceTest {
                 .body("street", equalTo("Testgade"))
                 .body("additionalInfo", equalTo("dejligt sted"));
     }
+    
+    @Test
+    public void testGetAllPersonsWithZip() {
+        given()
+                .contentType("application/json")
+                .get("/address/persons/" + p1.getAddress().getCityInfo().getZipCode()).then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("firstName", hasItems("Gurli"))
+                .body("lastName", hasItems("Mogensen"));
+    }
        
 }

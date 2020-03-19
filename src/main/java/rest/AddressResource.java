@@ -7,6 +7,7 @@ import dtos.ExceptionDTO;
 import dtos.PersonDTO;
 import dtos.PhoneDTO;
 import exceptions.AlreadyInOrderException;
+import exceptions.AlreadyInUseException;
 import exceptions.NotFoundException;
 import facades.Facade;
 import java.util.List;
@@ -42,6 +43,18 @@ public class AddressResource {
         address.setStreet(street);
         try {
             return GSON.toJson(FACADE.findAddress(address));
+        } catch (NotFoundException ex) {
+            throw new WebApplicationException(ex.getMessage(), 400);
+        }
+        
+    }
+    
+    @GET
+    @Path("persons/{zipCode}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getAllPersonsWithZip(@PathParam("zipCode") int zipCode) {
+        try {
+            return GSON.toJson(FACADE.getAllPersonsWithZip(zipCode));
         } catch (NotFoundException ex) {
             throw new WebApplicationException(ex.getMessage(), 400);
         }

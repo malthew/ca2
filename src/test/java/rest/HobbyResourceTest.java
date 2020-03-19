@@ -144,5 +144,16 @@ public class HobbyResourceTest {
                 .body("name", equalTo("Cykling"))
                 .body("description", equalTo("Cykling på hold"));
     }
+    
+    @Test
+    public void testGetAllPersonsWithHobby() {
+        given()
+                .contentType("application/json")
+                .get("/hobby/persons/" + h1.getName()).then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("firstName", hasItems("Gurli"))
+                .body("lastName", hasItems("Mogensen"));
+    }
        
 }
