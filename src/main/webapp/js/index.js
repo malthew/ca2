@@ -173,7 +173,7 @@ const createNewUser = function () {
     let newUser = {"firstName": firstname, "lastName": lastname, "email": email, "personid": personid};
 
     let options = makeOptions('POST', newUser);
-    fetch('/ca2/api/person/createperson', options)
+    fetch('/ca2/api/person/createnormal', options)
             .then(function (response) {
                 return response.json();
             })
@@ -185,7 +185,7 @@ const createNewUser = function () {
                     document.getElementById("find_Response").innerHTML = "<br><p>An error has occured, please try again at a later time.</p>";
                 } else {
                     console.log('Success:', data);
-                    document.getElementById("creation_Response").innerHTML = firstname + " was added as " + data.id;
+                    document.getElementById("creation_Response").innerHTML = firstname + " has been created";
                 }
             });
 };
