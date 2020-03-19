@@ -139,7 +139,7 @@ public class PersonResource {
     @Path("create")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public String createPerson2(PersonDTO person) {
+    public String createPersonWithInformation(PersonDTO person) {
         if (person.getFirstName().isEmpty() || person.getLastName().isEmpty() || person.getAddress() == null) {
             throw new WebApplicationException("Not all required arguments included", 400);
         }

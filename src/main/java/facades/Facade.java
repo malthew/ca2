@@ -561,7 +561,7 @@ public class Facade implements FacadeInterface {
         PersonDTO person = new PersonDTO(new Person(3, "email2", "Asger", "Jansen"));
         AddressDTO address = new AddressDTO(new Address("Testgade 4", "dejligt sted"));
         CityInfoDTO cityInfo = new CityInfoDTO(3000, "Ny by");
-        cityInfo.addAddress(address);
+        //cityInfo.addAddress(address);
         address.setCityInfo(cityInfo);
         List<HobbyDTO> hobby = new ArrayList();
         hobby.add(new HobbyDTO("Cykling", "Cykling på hold"));
