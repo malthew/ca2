@@ -303,7 +303,8 @@ public class Facade implements FacadeInterface {
     public List<PersonDTO> getAllPersonsWithHobby(String hobbyName) throws NotFoundException {
         EntityManager em = emf.createEntityManager();
         try {
-            List<Person> persons = em.createQuery("SELECT p FROM Person p JOIN p.hobbys ph WHERE ph.name = :hobby", Person.class)
+            List<Person> persons = em.createQuery("SELECT p FROM Person p " 
+                    + "JOIN p.hobbys ph WHERE ph.name = :hobby", Person.class)
                     .setParameter("hobby", hobbyName)
                     .getResultList();
 
@@ -320,12 +321,27 @@ public class Facade implements FacadeInterface {
         }
     }
 
-//    public List<PersonDTO> getAllPersonsWithZip(int zipCode) {
-//        EntityManager em = emf.createEntityManager();
-//        try {
-//            List<Person> persons = em.createQuery("SELECT p FROM Person p WHERE p.address")
-//        }
-//    }
+    public List<PersonDTO> getAllPersonsWithZip(int zipCode) throws NotFoundException {
+        EntityManager em = emf.createEntityManager();
+        try {
+            List<Person> persons = em.createQuery("SELECT p FROM Person p " 
+                    + "JOIN p.address pa JOIN pa.cityInfo pac WHERE pac.zipCode = :zipCode", Person.class)
+                    .setParameter("zipCode", zipCode)
+                    .getResultList();
+            
+            List<PersonDTO> persondtos = new ArrayList();
+            for (Person person : persons) {
+                persondtos.add(new PersonDTO(person));
+            }
+            
+            return persondtos;
+        } catch (NoResultException ex) {
+            throw new NotFoundException("Persons with given Zip Code could not be found");
+        } finally {
+            em.close();
+        }
+    }
+    
     public String fillDB() {
         EntityManager em = emf.createEntityManager();
         try {

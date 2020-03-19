@@ -40,7 +40,7 @@ public class FacadeTest {
     private static Facade facade;
     private EntityManager em;
 
-    private Person p1, p2;
+    private Person p1, p2, p4;
     private Hobby h1, h2, h3;
     private Address a1, a2;
     private CityInfo c1, c2;
@@ -75,6 +75,7 @@ public class FacadeTest {
 
             p1 = new Person(1, "email", "Gurli", "Mogensen");
             p2 = new Person(2, "mail", "Gunnar", "Hjorth");
+            p4 = new Person(4, "gmail", "Georg", "Mogensen");
 
             h1 = new Hobby("Cykling", "Cykling på hold");
             h2 = new Hobby("Film", "Gyserfilm");
@@ -99,6 +100,7 @@ public class FacadeTest {
             //adding address to persons
             p1.setAddress(a1);
             p2.setAddress(a2);
+            p4.setAddress(a1);
             //setting persons to phones
             phone1.setPerson(p1);
             phone2.setPerson(p1);
@@ -114,6 +116,7 @@ public class FacadeTest {
             //persisting persons
             em.persist(p1);
             em.persist(p2);
+            em.persist(p4);
             em.getTransaction().commit();
         } finally {
             em.close();
@@ -208,6 +211,12 @@ public class FacadeTest {
     @Test
     public void testGetAllPersonsWithHobby() throws NotFoundException {
         assertThat(facade.getAllPersonsWithHobby("Film"), hasSize(1));
+    }
+    
+    @Test
+    public void testGetAllPersonsWithZip() throws NotFoundException {
+        assertThat(facade.getAllPersonsWithZip(2100), hasSize(2));
+        assertThat(facade.getAllPersonsWithZip(2300), hasSize(1));
     }
     
     @Test
