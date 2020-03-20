@@ -121,9 +121,18 @@ addressButton.onclick = function (e) {
     createAddressButtons();
 };
 function createAddressButtons() {
-    let b1 = "<button type=\"submit\" id=\"findAddress\">Find Address</button>";
+    let b1 = "<button type=\"submit\" onclick=\"createInputFieldsFindAddress()\">Find Address</button>";
     let b2 = "<button type=\"submit\" id=\"createAddress\">Create Address</button>";
     linksDiv.innerHTML = b1 + b2;
+}
+
+function createInputFieldsFindAddress() {
+    let form = "<form><label for=\"aname\">Address street:</label><br>" +
+            "<input type=\"text\" id=\"aname\" name=\"aname\"><br>" +
+            "<button type=\"button\" onclick=\"findAddress()\" class=\"btn btn-primary\">Find Address</button>" +
+            "</form> ";
+    let response = "<p id=\"find_Response\"></p>";
+    linksDiv.innerHTML = form + response;
 }
 
 /*---------------------------------------------*/
@@ -140,7 +149,7 @@ hobbyButton.onclick = function (e) {
     createHobbyButtons();
 };
 function createHobbyButtons() {
-    let b1 = "<button type=\"submit\" id=\"findHobby\">Find Hobby</button>";
+    let b1 = "<button type=\"submit\" onclick=\"createInputFieldsFindHobby()\">Find Hobby</button>";
     let b2 = "<button type=\"submit\" id=\"createHobby\">Create Hobby</button>";
     let b3 = "<button type=\"submit\" onclick=\"createInputFieldsEditHobby()\">Edit Hobby</button>";
     linksDiv.innerHTML = b1 + b2 + b3;
@@ -163,6 +172,15 @@ function createInputFieldsEditHobby() {
     linksDiv.innerHTML = form + response;
 }
 
+function createInputFieldsFindHobby() {
+    let form = "<form><label for=\"hname\">Hobby name:</label><br>" +
+            "<input type=\"text\" id=\"hname\" name=\"hname\"><br>" +
+            "<button type=\"button\" onclick=\"findHobby()\" class=\"btn btn-primary\">Find Hobby</button>" +
+            "</form> ";
+    let response = "<p id=\"find_Response\"></p>";
+    linksDiv.innerHTML = form + response;
+}
+
 /*---------------------------------------------*/
 /*--------- End Create Button Hobby -----------*/
 /*---------------------------------------------*/
@@ -177,7 +195,7 @@ phoneButton.onclick = function (e) {
     createPhoneButtons();
 };
 function createPhoneButtons() {
-    let b1 = "<button type=\"submit\" id=\"findPhone\">Find Phone</button>";
+    let b1 = "<button type=\"submit\" onclick=\"createInputFieldsFindPhone()\">Find Phone</button>";
     let b2 = "<button type=\"submit\" id=\"createPhone\">Create Phone</button>";
     let b3 = "<button type=\"submit\" onclick=\"createInputFieldsFindPhoneByName()\">Find Phones By Name</button>";
     let b4 = "<button type=\"submit\" onclick=\"createInputFieldsEditPhone()\">Edit Phone</button>";
@@ -190,6 +208,15 @@ function createInputFieldsFindPhoneByName() {
             "<label for=\"lname\">Last name:</label><br>" +
             "<input type=\"text\" id=\"lname\" name=\"lname\"><br>" +
             "<button type=\"button\" onclick=\"findPhoneByName()\" class=\"btn btn-primary\">Find Phones</button>" +
+            "</form> ";
+    let response = "<p id=\"find_Response\"></p>";
+    linksDiv.innerHTML = form + response;
+}
+
+function createInputFieldsFindPhone() {
+    let form = "<form><label for=\"pnumber\">Phone number:</label><br>" +
+            "<input type=\"number\" id=\"pnumber\" name=\"pnumber\"><br>" +
+            "<button type=\"button\" onclick=\"findPhoneByNumber()\" class=\"btn btn-primary\">Find Phone</button>" +
             "</form> ";
     let response = "<p id=\"find_Response\"></p>";
     linksDiv.innerHTML = form + response;
@@ -368,6 +395,37 @@ function createPersonWithInformation() {
 /*------------ Begin Find Address -------------*/
 /*---------------------------------------------*/
 
+const findAddress = function () {
+    let aname = document.getElementById("aname").value;
+    let url = "/ca2/api/address/" + aname;
+    if (aname === "") {
+        document.getElementById("find_Response").innerHTML = "<br><p>Please enter a address street in the input field.</p>";
+    } else {
+        fetch(url)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.code === 400) {
+                        document.getElementById("find_Response").innerHTML = "<br><p>No address was found with this street name</p>";
+                    } else if (data.code === 500) {
+                        document.getElementById("find_Response").innerHTML = "<br><p>An error has occured, please try again at a later time.</p>";
+                    } else {
+                        console.log("data", data);
+                        linksDiv.innerHTML = addressTable(data);
+                    }
+                });
+    }
+}
+
+function addressTable(address) {
+    var tableinfo = "<table id=\"indextable\" class=\"table\">" +
+            "<tr><th>Street</th>" +
+            "<th>Additional Info</th>" +
+            "</tr>" +
+            "<tr><td>" + address.street + "</td><td>" + address.additionalInfo + "</td><td>" + "</tr></table>";
+    return tableinfo;
+
+}
+
 
 /*---------------------------------------------*/
 /*------------- End Find Address --------------*/
@@ -376,6 +434,37 @@ function createPersonWithInformation() {
 /*---------------------------------------------*/
 /*------------- Begin Find Hobby --------------*/
 /*---------------------------------------------*/
+
+const findHobby = function () {
+    let hname = document.getElementById("hname").value;
+    let url = "/ca2/api/hobby/" + hname;
+    if (hname === "") {
+        document.getElementById("find_Response").innerHTML = "<br><p>Please enter a hobby name in the input field.</p>";
+    } else {
+        fetch(url)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.code === 400) {
+                        document.getElementById("find_Response").innerHTML = "<br><p>No hobby was found with this name</p>";
+                    } else if (data.code === 500) {
+                        document.getElementById("find_Response").innerHTML = "<br><p>An error has occured, please try again at a later time.</p>";
+                    } else {
+                        console.log("data", data);
+                        linksDiv.innerHTML = hobbyTable(data);
+                    }
+                });
+    }
+}
+
+function hobbyTable(hobby) {
+    var tableinfo = "<table id=\"indextable\" class=\"table\">" +
+            "<tr><th>Hobby name</th>" +
+            "<th>Description</th>" +
+            "</tr>" +
+            "<tr><td>" + hobby.name + "</td><td>" + hobby.description + "</td><td>" + "</tr></table>";
+    return tableinfo;
+
+}
 
 
 /*---------------------------------------------*/
@@ -421,6 +510,39 @@ function editHobby() {
 /*---------------------------------------------*/
 /*------------- Begin Find Phone --------------*/
 /*---------------------------------------------*/
+
+const findPhoneByNumber = function () {
+    let pnumber = document.getElementById("pnumber").value;
+    let url = "/ca2/api/phone/" + pnumber;
+    if (pnumber === "") {
+        document.getElementById("find_Response").innerHTML = "<br><p>Please enter a phone number in the input field.</p>";
+    } else {
+        fetch(url)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.code === 400) {
+                        document.getElementById("find_Response").innerHTML = "<br><p>No phone was found with this number</p>";
+                    } else if (data.code === 500) {
+                        document.getElementById("find_Response").innerHTML = "<br><p>An error has occured, please try again at a later time.</p>";
+                    } else {
+                        console.log("data", data);
+                        linksDiv.innerHTML = phoneTable(data);
+                    }
+                });
+    }
+}
+
+function phoneTable(phone) {
+    var tableinfo = "<table id=\"indextable\" class=\"table\">" +
+            "<tr><th>Phone Number</th>" +
+            "<th>Description</th>" +
+            "<th>First Name</th>" +
+            "<th>Last Name</th></tr>" +
+            "<tr><td>" + phone.number + "</td><td>" + phone.description + "</td><td>" + phone.person.firstName + "</td>" +
+            "<td>" + phone.person.lastName + "</tr></table>";
+    return tableinfo;
+
+}
 
 
 /*---------------------------------------------*/

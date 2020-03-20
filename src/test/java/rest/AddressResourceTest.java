@@ -138,7 +138,7 @@ public class AddressResourceTest {
     public void testFindAddress() {
             given()
                 .contentType("application/json")
-                .get("/address/"+a1.getStreet()+"/"+a1.getAdditionalInfo()).then()
+                .get("/address/"+a1.getStreet()).then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("street", equalTo("Testgade"))

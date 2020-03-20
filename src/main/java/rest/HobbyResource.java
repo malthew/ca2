@@ -34,15 +34,11 @@ public class HobbyResource {
 
     
     @GET
-    @Path("/{name}/{description}")
+    @Path("/{name}")
     @Produces(MediaType.APPLICATION_JSON)
-    public String findHobby(@PathParam("name") String name, 
-            @PathParam("description") String description) {
-        HobbyDTO hobby = new HobbyDTO();
-        hobby.setName(name);
-        hobby.setDescription(description);
+    public String findHobby(@PathParam("name") String name) {
         try {
-            return GSON.toJson(FACADE.findHobby(hobby));
+            return GSON.toJson(FACADE.findHobby(name));
         } catch (NotFoundException ex) {
             throw new WebApplicationException(ex.getMessage(), 400);
         }

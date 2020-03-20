@@ -138,7 +138,7 @@ public class PhoneResourceTest {
     public void testFindPhone() {
             given()
                 .contentType("application/json")
-                .get("/phone/"+phone1.getNumber()+"/"+phone1.getDescription()).then()
+                .get("/phone/"+phone1.getNumber()).then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("number", equalTo(1234))

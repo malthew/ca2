@@ -138,7 +138,7 @@ public class HobbyResourceTest {
     public void testFindHobby() {
             given()
                 .contentType("application/json")
-                .get("/hobby/"+h1.getName()+"/"+h1.getDescription()).then()
+                .get("/hobby/"+h1.getName()).then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("name", equalTo("Cykling"))

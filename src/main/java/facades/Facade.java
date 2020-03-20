@@ -222,14 +222,14 @@ public class Facade implements FacadeInterface {
         }
     }
 
-    public AddressDTO findAddress(AddressDTO address) throws NotFoundException {
+    public AddressDTO findAddress(String street) throws NotFoundException {
         EntityManager em = emf.createEntityManager();
         Address entaddress = null;
         try {
             em.getTransaction().begin();
             TypedQuery<Address> query = em.createQuery("SELECT a FROM Address a WHERE"
                     + " a.street = :address", Address.class)
-                    .setParameter("address", address.getStreet());
+                    .setParameter("address", street);
             em.getTransaction().commit();
             entaddress = query.getSingleResult();
             return new AddressDTO(entaddress);
@@ -240,14 +240,14 @@ public class Facade implements FacadeInterface {
         }
     }
 
-    public HobbyDTO findHobby(HobbyDTO hobby) throws NotFoundException {
+    public HobbyDTO findHobby(String hobby) throws NotFoundException {
         EntityManager em = emf.createEntityManager();
         Hobby enthobby = null;
         try {
             em.getTransaction().begin();
             TypedQuery<Hobby> query = em.createQuery("SELECT h FROM Hobby h WHERE"
                     + " h.name = :hobby", Hobby.class)
-                    .setParameter("hobby", hobby.getName());
+                    .setParameter("hobby", hobby);
             em.getTransaction().commit();
             enthobby = query.getSingleResult();
             return new HobbyDTO(enthobby);
@@ -258,14 +258,14 @@ public class Facade implements FacadeInterface {
         }
     }
 
-    public PhoneDTO findPhone(PhoneDTO phone) throws NotFoundException {
+    public PhoneDTO findPhone(int number) throws NotFoundException {
         EntityManager em = emf.createEntityManager();
         Phone entphone = null;
         try {
             em.getTransaction().begin();
             TypedQuery<Phone> query = em.createQuery("SELECT p FROM Phone p WHERE "
                     + " p.number = :number", Phone.class)
-                    .setParameter("number", phone.getNumber());
+                    .setParameter("number", number);
             em.getTransaction().commit();
             entphone = query.getSingleResult();
             return new PhoneDTO(entphone);
