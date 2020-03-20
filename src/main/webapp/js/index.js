@@ -436,8 +436,8 @@ function phonesToTable(phones) {
     var tableinfo = phones.map(x => `<tr><td>  ${x.number} </td><td> ${x.description} </td></tr>`);
 
     tableinfo.unshift("<table id=\"indextable\" class=\"table\">\n\
-    <tr><th style=\"text-align:center\">Phone Number</th>\n\
-    <th style=\"text-align:center\">Description</th></tr>");
+    <tr><th>Phone Number</th>\n\
+    <th>Description</th></tr>");
 
     tableinfo.push("</table>");
     return tableinfo.join('');
