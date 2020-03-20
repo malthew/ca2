@@ -338,8 +338,6 @@ function createPersonWithInformation() {
     
     let person = {"personid": personid, "email": email, "firstName": firstname, "lastName": lastname, "phones": phones, "address": address, "hobbies": hobbies};
     
-    console.log(person);
-    
     let options = makeOptions('POST', person);
     fetch('/ca2/api/person/create', options)
             .then(function (response) {

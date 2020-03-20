@@ -493,7 +493,6 @@ public class Facade implements FacadeInterface {
             entperson.setFirstName(person.getFirstName());
             entperson.setLastName(person.getLastName());
 
-            //checking if cityInfo exists and adding address to cityInfo
             //Checking if address exist
             TypedQuery<Address> query = em.createQuery("SELECT a FROM Address a WHERE"
                     + " a.street = :address", Address.class)
@@ -508,7 +507,7 @@ public class Facade implements FacadeInterface {
             //Setting address
             if (entaddress == null) {
                 entaddress = new Address(person.getAddress().getStreet(), person.getAddress().getAdditionalInfo());
-                //if the address if new we check in the cityInfo exists, if the address exists the cityInfo should also exist
+                //if the address is new we check in the cityInfo exists, if the address exists the cityInfo should also exist
                 TypedQuery<CityInfo> query1 = em.createQuery("SELECT c FROM CityInfo c WHERE"
                         + " c.zipCode = :zipCode", CityInfo.class)
                         .setParameter("zipCode", person.getAddress().getCityInfo().getZipCode());
