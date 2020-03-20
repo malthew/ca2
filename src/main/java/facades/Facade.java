@@ -86,7 +86,7 @@ public class Facade implements FacadeInterface {
         }
     }
 
-    public PersonDTO editPersonHobby(String firstName, String lastName, String oldHobbyName, String newHobbyName, String newDescription) throws NotFoundException {
+    public PersonDTO editPersonHobby(String firstName, String lastName, String oldHobbyName, String newHobbyName, String newDescription) throws NotFoundException, AlreadyInOrderException {
         EntityManager em = emf.createEntityManager();
         try {
             TypedQuery<Person> q = em.createQuery("SELECT p FROM Person p WHERE "
@@ -96,7 +96,19 @@ public class Facade implements FacadeInterface {
 
             Person personToEdit = q.getSingleResult();
 
+            //checking if the hobby we are trying to add already exists in the DB
+            TypedQuery<Hobby> query = em.createQuery("SELECT h FROM Hobby h WHERE"
+                    + " h.name = :hobby", Hobby.class)
+                    .setParameter("hobby", newHobbyName);
+            Hobby existingHobby = null;
+            try {
+                existingHobby = query.getSingleResult();
+            } catch (NoResultException ex) {
+                existingHobby = null;
+            }
+
             List<Hobby> hobbies = personToEdit.getHobbys();
+
             //remembering which hobby to remove person from and remove from person to avoid ConcurrentModificationException
             Hobby hobbyToChange = null;
             for (Hobby hobby : hobbies) {
@@ -104,12 +116,24 @@ public class Facade implements FacadeInterface {
                     hobbyToChange = hobby;
                 }
             }
-            //checking if we need to add a new hobby to person and remove a person from a hobby and doing it if needed
-            if (hobbyToChange != null) {
-                personToEdit.addHobby(new Hobby(newHobbyName, newDescription));
-                personToEdit.removeHobby(hobbyToChange);
-                hobbyToChange.removePerson(personToEdit);
+
+            if (hobbyToChange == null) {
+                throw new NotFoundException("Hobby you are trying to edit is not found with that person");
             }
+
+            //if the existingHobby doesn't exist we create a new new Hobby to add to the person, otherwise we add the existing hobby
+            if (existingHobby == null) {
+                personToEdit.addHobby(new Hobby(newHobbyName, newDescription));
+            } else {
+                for (Person person : existingHobby.getPersons()) {
+                    if (person.getFirstName().equals(firstName) && person.getLastName().equals(lastName)) {
+                        throw new AlreadyInOrderException("This person is already tied to the hobby you are trying to add");
+                    }
+                }
+                personToEdit.addHobby(existingHobby);
+            }
+            personToEdit.removeHobby(hobbyToChange);
+            hobbyToChange.removePerson(personToEdit);
 
             em.getTransaction().begin();
             em.merge(personToEdit);
@@ -190,7 +214,7 @@ public class Facade implements FacadeInterface {
                     + "p.personid = :id", Person.class)
                     .setParameter("id", id);
             em.getTransaction().commit();
-            return new PersonDTO(query.getSingleResult());    
+            return new PersonDTO(query.getSingleResult());
         } catch (Exception ex) {
             throw new NotFoundException("No person found with this ID");
         } finally {
@@ -303,7 +327,7 @@ public class Facade implements FacadeInterface {
     public List<PersonDTO> getAllPersonsWithHobby(String hobbyName) throws NotFoundException {
         EntityManager em = emf.createEntityManager();
         try {
-            List<Person> persons = em.createQuery("SELECT p FROM Person p " 
+            List<Person> persons = em.createQuery("SELECT p FROM Person p "
                     + "JOIN p.hobbys ph WHERE ph.name = :hobby", Person.class)
                     .setParameter("hobby", hobbyName)
                     .getResultList();
@@ -324,16 +348,16 @@ public class Facade implements FacadeInterface {
     public List<PersonDTO> getAllPersonsWithZip(int zipCode) throws NotFoundException {
         EntityManager em = emf.createEntityManager();
         try {
-            List<Person> persons = em.createQuery("SELECT p FROM Person p " 
+            List<Person> persons = em.createQuery("SELECT p FROM Person p "
                     + "JOIN p.address pa JOIN pa.cityInfo pac WHERE pac.zipCode = :zipCode", Person.class)
                     .setParameter("zipCode", zipCode)
                     .getResultList();
-            
+
             List<PersonDTO> persondtos = new ArrayList();
             for (Person person : persons) {
                 persondtos.add(new PersonDTO(person));
             }
-            
+
             return persondtos;
         } catch (NoResultException ex) {
             throw new NotFoundException("Persons with given Zip Code could not be found");
@@ -341,7 +365,7 @@ public class Facade implements FacadeInterface {
             em.close();
         }
     }
-    
+
     public String fillDB() {
         EntityManager em = emf.createEntityManager();
         try {
@@ -571,26 +595,26 @@ public class Facade implements FacadeInterface {
 //        //PersonDTO pdto = facade.editPersonPhone("Gurli", "Mogensen", 1234, 9999, "new phone");
 //        System.out.println(pdto.getPhones());
 //    }
-    public static void main(String[] args) throws AlreadyInUseException, NotFoundException {
+    public static void main(String[] args) throws AlreadyInUseException, NotFoundException, AlreadyInOrderException {
         emf = EMF_Creator.createEntityManagerFactory(EMF_Creator.DbSelector.TEST, EMF_Creator.Strategy.CREATE);
         Facade pf = new Facade();
-//        PersonDTO person = new PersonDTO(new Person(3, "email2", "Asger", "Jansen"));
-//        AddressDTO address = new AddressDTO(new Address("Testgade 4", "dejligt sted"));
-//        CityInfoDTO cityInfo = new CityInfoDTO(3000, "Ny by");
-//        //cityInfo.addAddress(address);
-//        address.setCityInfo(cityInfo);
-//        List<HobbyDTO> hobby = new ArrayList();
-//        hobby.add(new HobbyDTO("Cykling", "Cykling på hold"));
-//        hobby.add(new HobbyDTO("Svømning", "Crawl"));
-//        List<PhoneDTO> phone = new ArrayList();
-//        phone.add(new PhoneDTO(4444, "hjemmetelefon"));
-//        phone.add(new PhoneDTO(5555, "mobil"));
-//        person.setAddress(address);
-//        person.setHobbies(hobby);
-//        person.setPhones(phone);
+        PersonDTO person = new PersonDTO(new Person(3, "email2", "Asger", "Jansen"));
+        AddressDTO address = new AddressDTO(new Address("Testgade 4", "dejligt sted"));
+        CityInfoDTO cityInfo = new CityInfoDTO(3000, "Ny by");
+        //cityInfo.addAddress(address);
+        address.setCityInfo(cityInfo);
+        List<HobbyDTO> hobby = new ArrayList();
+        hobby.add(new HobbyDTO("Cykling", "Cykling på hold"));
+        hobby.add(new HobbyDTO("Svømning", "Crawl"));
+        List<PhoneDTO> phone = new ArrayList();
+        phone.add(new PhoneDTO(4444, "hjemmetelefon"));
+        phone.add(new PhoneDTO(5555, "mobil"));
+        person.setAddress(address);
+        person.setHobbies(hobby);
+        person.setPhones(phone);
 //        PersonDTO result = pf.createPersonWithInformations(person);
 //        Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 //        System.out.println(GSON.toJson(result));
-        System.out.println(pf.getPhonesFromPerson("Gurli", "Mogensen"));
+        System.out.println(pf.editPersonHobby("Gurli", "Mogensen", "Cykling", "Hockey", "lige meget"));
     }
 }

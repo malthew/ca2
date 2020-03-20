@@ -99,7 +99,25 @@ hobbyButton.onclick = function (e) {
 function createHobbyButtons() {
     let b1 = "<button type=\"submit\" id=\"findHobby\">Find Hobby</button>";
     let b2 = "<button type=\"submit\" id=\"createHobby\">Create Hobby</button>";
-    linksDiv.innerHTML = b1 + b2;
+    let b3 = "<button type=\"submit\" onclick=\"createInputFieldsEditHobby()\">Edit Hobby</button>";
+    linksDiv.innerHTML = b1 + b2 + b3;
+}
+
+function createInputFieldsEditHobby() {
+    let form = "<form><label for=\"fname\">First name:</label><br>" +
+            "<input type=\"text\" id=\"fname\" name=\"fname\"><br>" +
+            "<label for=\"lname\">Last name:</label><br>" +
+            "<input type=\"text\" id=\"lname\" name=\"lname\"><br>" +
+            "<label for=\"oldhobby\">Hobby to edit:</label><br>" +
+            "<input type=\"text\" id=\"oldhobby\" name=\"oldhobby\"><br>" +
+            "<label for=\"newhobby\">New Hobby (One word):</label><br>" +
+            "<input type=\"text\" id=\"newhobby\" name=\"newhobby\"><br>" +
+            "<label for=\"newdescription\">New Description (One word):</label><br>" +
+            "<input type=\"text\" id=\"newdescription\" name=\"newdescription\"><br>" +
+            "<button type=\"button\" onclick=\"editHobby()\" class=\"btn btn-primary\">Edit Hobby</button>" +
+            "</form> ";
+    let response = "<p id=\"edit_Response\"></p>";
+    linksDiv.innerHTML = form + response;
 }
 
 /*---------------------------------------------*/
@@ -253,6 +271,42 @@ function personTable(person) {
 
 /*---------------------------------------------*/
 /*-------------- End Find Hobby ---------------*/
+/*---------------------------------------------*/
+
+/*---------------------------------------------*/
+/*------------- Begin Edit Hobby --------------*/
+/*---------------------------------------------*/
+
+function editHobby() {
+    let firstName = document.querySelector("#fname").value;
+    let lastName = document.querySelector("#lname").value;
+    let oldName = document.querySelector("#oldhobby").value;
+    let newName = document.querySelector("#newhobby").value;
+    let newDescription = document.querySelector("#newdescription").value;
+    let user = {"firstName": firstName, "lastName": lastName};
+    let options = makeOptions('PUT', user);
+    let url = "/ca2/api/person/hobby/" + oldName + "/" + newName + "/" + newDescription;
+
+    fetch(url, options)
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                if (data.code === 400) {
+                    console.error('Fail:', data);
+                    document.getElementById("edit_Response").innerHTML = data.message;
+                } else if (data.code === 500) {
+                    document.getElementById("edit_Response").innerHTML = "<br><p>An error has occured, please try again at a later time.</p>";
+                } else {
+                    console.log('Success:', data);
+                    document.getElementById("edit_Response").innerHTML = "Hobby with name: " + newName + " was added to "
+                            + firstName + " " + lastName + " and hobby with name: " + oldName + " was removed.";
+                }
+            });
+}
+
+/*---------------------------------------------*/
+/*-------------- End Edit Hobby ---------------*/
 /*---------------------------------------------*/
 
 /*---------------------------------------------*/

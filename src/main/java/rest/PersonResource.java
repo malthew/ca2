@@ -85,7 +85,7 @@ public class PersonResource {
         }
         try {
         return GSON.toJson(FACADE.editPersonHobby(person.getFirstName(), person.getLastName(), oldHobbyName, newHobbyName, newDescription));
-        }catch(NotFoundException ex){
+        }catch(NotFoundException | AlreadyInOrderException ex){
             throw new WebApplicationException(ex.getMessage(), 400);
         }
     }

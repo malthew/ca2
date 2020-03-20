@@ -167,7 +167,7 @@ public class FacadeTest {
     }
     
     @Test
-    public void testEditPersonHobby() throws NotFoundException {
+    public void testEditPersonHobby() throws NotFoundException, AlreadyInOrderException {
         String firstName = "Gurli";
         String lastName = "Mogensen";
         String oldHobbyName = "Film";
