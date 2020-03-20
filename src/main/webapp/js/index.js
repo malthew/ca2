@@ -328,8 +328,8 @@ function createPersonWithInformation() {
     let email = document.querySelector("#email").value;
     let personid = document.querySelector("#pid").value;
     
-    let zipCode = document.querySelector("#zipcode");
-    let city = document.querySelector("#city");
+    let zipCode = document.querySelector("#zipcode").value;
+    let city = document.querySelector("#city").value;
     let cityInfo = {"zipCode": zipCode, "city": city};
     
     let street = document.querySelector("#street").value;
