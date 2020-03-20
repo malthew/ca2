@@ -33,19 +33,25 @@ public class PhoneResource {
 
     
     @GET
-    @Path("/{number}/{description}")
+    @Path("/{number}")
     @Produces(MediaType.APPLICATION_JSON)
-    public String findPhone(@PathParam("number") int number, 
-            @PathParam("description") String description) {
-        PhoneDTO phone = new PhoneDTO();
-        phone.setNumber(number);
-        phone.setDescription(description);
+    public String findPhone(@PathParam("number") int number) {
         try {
-            return GSON.toJson(FACADE.findPhone(phone));
+            return GSON.toJson(FACADE.findPhone(number));
         } catch (NotFoundException ex) {
             throw new WebApplicationException(ex.getMessage(), 400);
         }
-        
     }
-
+    
+    @POST
+    @Path("/add")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public String createPhone(PhoneDTO phone) {
+        try {
+            return GSON.toJson(FACADE.createPhone(phone));
+        } catch (AlreadyInOrderException ex) {
+            throw new WebApplicationException(ex.getMessage(), 400);
+        }
+    }
 }

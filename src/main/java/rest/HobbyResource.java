@@ -8,6 +8,7 @@ import dtos.HobbyDTO;
 import dtos.PersonDTO;
 import dtos.PhoneDTO;
 import exceptions.AlreadyInOrderException;
+import exceptions.AlreadyInUseException;
 import exceptions.NotFoundException;
 import facades.Facade;
 import java.util.List;
@@ -34,15 +35,11 @@ public class HobbyResource {
 
     
     @GET
-    @Path("/{name}/{description}")
+    @Path("/{name}")
     @Produces(MediaType.APPLICATION_JSON)
-    public String findHobby(@PathParam("name") String name, 
-            @PathParam("description") String description) {
-        HobbyDTO hobby = new HobbyDTO();
-        hobby.setName(name);
-        hobby.setDescription(description);
+    public String findHobby(@PathParam("name") String name) {
         try {
-            return GSON.toJson(FACADE.findHobby(hobby));
+            return GSON.toJson(FACADE.findHobby(name));
         } catch (NotFoundException ex) {
             throw new WebApplicationException(ex.getMessage(), 400);
         }
@@ -56,6 +53,18 @@ public class HobbyResource {
         try {
             return GSON.toJson(FACADE.getAllPersonsWithHobby(hobbyName));
         } catch (NotFoundException ex) {
+            throw new WebApplicationException(ex.getMessage(), 400);
+        }
+    }
+    
+    @POST
+    @Path("/createhobby")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public String createHobby(HobbyDTO hobby) {
+        try {
+            return GSON.toJson(FACADE.addHobby(hobby));
+        } catch (AlreadyInUseException ex) {
             throw new WebApplicationException(ex.getMessage(), 400);
         }
     }

@@ -34,15 +34,11 @@ public class AddressResource {
 
     
     @GET
-    @Path("/{street}/{additionalInfo}")
+    @Path("/{street}")
     @Produces(MediaType.APPLICATION_JSON)
-    public String findAddress(@PathParam("street") String street, 
-            @PathParam("additionalInfo") String additionalInfo) {
-        AddressDTO address = new AddressDTO();
-        address.setAdditionalInfo(additionalInfo);
-        address.setStreet(street);
+    public String findAddress(@PathParam("street") String street) {
         try {
-            return GSON.toJson(FACADE.findAddress(address));
+            return GSON.toJson(FACADE.findAddress(street));
         } catch (NotFoundException ex) {
             throw new WebApplicationException(ex.getMessage(), 400);
         }
@@ -59,6 +55,18 @@ public class AddressResource {
             throw new WebApplicationException(ex.getMessage(), 400);
         }
         
+    }
+    
+    @POST
+    @Path("/add")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public String createAddress(AddressDTO address) {
+        try {
+            return GSON.toJson(FACADE.createAddress(address));
+        } catch (AlreadyInOrderException ex) {
+            throw new WebApplicationException(ex.getMessage(), 400);
+        }
     }
 
 }

@@ -181,7 +181,7 @@ public class FacadeTest {
     }
     
     @Test
-    public void testAddHobby()  {
+    public void testAddHobby() throws AlreadyInUseException  {
         assertEquals(0, facade.countFromHobby("Fodbold"));
         facade.addHobby(new HobbyDTO("Fodbold", "Amatør fodbold"));
         assertEquals(1, facade.countFromHobby("Fodbold"));
@@ -264,7 +264,7 @@ public class FacadeTest {
     
     @Test
     public void testFindAddress() throws NotFoundException {
-        assertEquals("Testgade", facade.findAddress(new AddressDTO(a1)).getStreet());
+        assertEquals("Testgade", facade.findAddress(a1.getStreet()).getStreet());
     }
     
     @Test
@@ -272,7 +272,7 @@ public class FacadeTest {
         Address a4 = a1;
         a1.setStreet("thiswillfail");
         try {
-            AddressDTO a = facade.findAddress(new AddressDTO(a4));
+            AddressDTO a = facade.findAddress(a4.getStreet());
             fail("No address found");
         } catch (NotFoundException ex) {
             assertThat(ex.getMessage(), is("No address found"));
@@ -281,7 +281,7 @@ public class FacadeTest {
     
     @Test
     public void testFindHobby() throws NotFoundException {
-        assertEquals("Cykling", facade.findHobby(new HobbyDTO(h1)).getName());
+        assertEquals("Cykling", facade.findHobby(h1.getName()).getName());
     }
     
     @Test
@@ -289,7 +289,7 @@ public class FacadeTest {
         Hobby h4 = h1;
         h4.setName("thiswillfail");
         try {
-            HobbyDTO h = facade.findHobby(new HobbyDTO(h4));
+            HobbyDTO h = facade.findHobby(h4.getName());
             fail("No hobby found");
         } catch (NotFoundException ex) {
             assertThat(ex.getMessage(), is("No hobby found"));
@@ -298,7 +298,7 @@ public class FacadeTest {
     
     @Test
     public void testFindPhone() throws NotFoundException {
-        assertEquals(1234, facade.findPhone(new PhoneDTO(phone1)).getNumber());
+        assertEquals(1234, facade.findPhone(phone1.getNumber()).getNumber());
     }
     
     @Test
@@ -306,7 +306,7 @@ public class FacadeTest {
         Phone p4 = phone1;
         p4.setNumber(12616212);
         try {
-            PhoneDTO h = facade.findPhone(new PhoneDTO(p4));
+            PhoneDTO h = facade.findPhone(p4.getNumber());
             fail("No phone found");
         } catch (NotFoundException ex) {
             assertThat(ex.getMessage(), is("No phone found"));
@@ -333,7 +333,7 @@ public class FacadeTest {
         //checking if someone with the name Asger is now in the db so findPerson can fetch him
         assertThat(result.getFirstName(), is (facade.findPerson(3).getFirstName()));
         //checking if the persons new hobby has been added to db and can now be found
-        assertNotNull(facade.findHobby(new HobbyDTO("Svømning", "Crawl")));       
+        assertNotNull(facade.findHobby("Svømning"));       
     }
     
     @Test
@@ -358,6 +358,44 @@ public class FacadeTest {
         fail("expected AlreadyInUseException to be thrown");
         }catch(AlreadyInUseException ex) {
             assertThat(ex.getMessage(), is("One of the phone numbers are already in use."));
+        }
+    }
+    
+    @Test
+    public void testCreatePhone() throws AlreadyInOrderException {
+        PhoneDTO phonedto = new PhoneDTO(8888, "added phone");
+        PhoneDTO pDTO = facade.createPhone(phonedto);
+        assertThat(pDTO, is (phonedto));
+    }
+    
+    @Test
+    public void testCreatePhoneFail() throws AlreadyInOrderException {
+        PhoneDTO phonedto = new PhoneDTO(8888, "added phone");
+        PhoneDTO pDTO = facade.createPhone(phonedto);
+        try {
+        PhoneDTO newphonedto = facade.createPhone(phonedto);
+        fail("expected AlreadyInUseException to be thrown");
+        }catch(AlreadyInOrderException ex) {
+            assertThat(ex.getMessage(), is("This phone is already created"));
+        }
+    }
+    
+    @Test
+    public void testCreateAddress() throws AlreadyInOrderException {
+        AddressDTO addressdto = new AddressDTO("Testvej2", "testdesc");
+        AddressDTO aDTO = facade.createAddress(addressdto);
+        assertThat(aDTO, is (addressdto));
+    }
+    
+    @Test
+    public void testCreateAddressFail() throws AlreadyInOrderException {
+        AddressDTO addressdto = new AddressDTO("Testvej2", "testdesc");
+        AddressDTO aDTO = facade.createAddress(addressdto);
+        try {
+        AddressDTO newaddressdto = facade.createAddress(addressdto);
+        fail("expected AlreadyInUseException to be thrown");
+        }catch(AlreadyInOrderException ex) {
+            assertThat(ex.getMessage(), is("This address is already created"));
         }
     }
 
