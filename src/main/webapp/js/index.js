@@ -36,7 +36,8 @@ personButton.onclick = function (e) {
 function createPersonButtons() {
     let b1 = "<button type=\"submit\" onclick=\"createInputFieldsFindPerson()\">Find Person</button>";
     let b2 = "<button type=\"submit\" onclick=\"createInputFieldsCreatePerson()\">Create Person</button>";
-    linksDiv.innerHTML = b1 + b2;
+    let b3 = "<button type=\"submit\" onclick=\"createInputFieldsCreatePersonWithInformation()\">Create Person With All Infomation</button>";
+    linksDiv.innerHTML = b1 + b2 + b3;
 }
 
 function createInputFieldsCreatePerson() {
@@ -52,6 +53,48 @@ function createInputFieldsCreatePerson() {
             "</form> ";
     let response = "<p id=\"creation_Response\"></p>";
     linksDiv.innerHTML = form + response;
+}
+
+function createInputFieldsCreatePersonWithInformation() {
+    //form for adding phones
+    let form1 = "<form><label for=\"hname\">Hobby name:</label><br>" +
+            "<input type=\"text\" id=\"hname\" name=\"hname\"><br>" +
+            "<label for=\"hdescription\">Hobby description:</label><br>" +
+            "<input type=\"text\" id=\"hdescription\" name=\"hdescription\"><br>" +
+            "<button type=\"button\" class=\"btn btn-primary\" onclick=\"addHobby()\">Add Hobby</button>" +
+            "</form> ";
+    //form for adding hobbies
+    let form2 = "<form><label for=\"pnumber\">Phone number:</label><br>" +
+            "<input type=\"text\" id=\"pnumber\" name=\"pnumber\"><br>" +
+            "<label for=\"pdescription\">Phone description:</label><br>" +
+            "<input type=\"text\" id=\"pdescription\" name=\"pdescription\"><br>" +
+            "<button type=\"button\" class=\"btn btn-primary\" onclick=\"addPhone()\">Add Phone</button>" +
+            "</form> ";
+
+    let form3 =
+            //Information to create Person
+            "<form><label for=\"fname\">First name:</label><br>" +
+            "<input type=\"text\" id=\"fname\" name=\"fname\"><br>" +
+            "<label for=\"lname\">Last name:</label><br>" +
+            "<input type=\"text\" id=\"lname\" name=\"lname\"><br>" +
+            "<label for=\"email\">Email:</label><br>" +
+            "<input type=\"text\" id=\"email\" name=\"email\"><br>" +
+            "<label for=\"pid\">Person ID:</label><br>" +
+            "<input type=\"text\" id=\"pid\" name=\"pid\" ><br><br>" +
+            //Information to create Address
+            "<label for=\"street\">Street:</label><br>" +
+            "<input type=\"text\" id=\"street\" name=\"street\" ><br><br>" +
+            "<label for=\"additionalinfo\">Additional Info about street:</label><br>" +
+            "<input type=\"text\" id=\"additionalinfo\" name=\"additionalinfo\" ><br><br>" +
+            //information to create CityInfo
+            "<label for=\"zipcode\">Zipcode (must be a number):</label><br>" +
+            "<input type=\"text\" id=\"zipcode\" name=\"zipcode\" ><br><br>" +
+            "<label for=\"city\">City:</label><br>" +
+            "<input type=\"text\" id=\"city\" name=\"city\" ><br><br>" +
+            "<button type=\"button\" class=\"btn btn-primary\" onclick=\"createPersonWithInformation()\">Create Person (Only click when you have added phones and hobbies</button>" +
+            "</form> ";
+    let response = "<p id=\"creation_Response\"></p>";
+    linksDiv.innerHTML = form1 + form2 + form3 + response;
 }
 
 function createInputFieldsFindPerson() {
@@ -253,6 +296,74 @@ function personTable(person) {
 
 /*---------------------------------------------*/
 /*-------------- End Find Person --------------*/
+/*---------------------------------------------*/
+
+/*---------------------------------------------*/
+/*-------- Begin CreatePersonWithInfo ---------*/
+/*---------------------------------------------*/
+var phones = new Array();
+var hobbies = new Array();
+
+function addHobby() {
+    let hobbyName = document.querySelector("#hname").value;
+    let hobbyDescription = document.querySelector("#hdescription").value;
+    let hobby = {"name": hobbyName, "description": hobbyDescription};
+    hobbies.push(hobby);
+    document.querySelector("#hname").value = "";
+    document.querySelector("#hdescription").value = "";
+}
+
+function addPhone() {
+    let phoneNumber = document.querySelector("#pnumber").value;
+    let phoneDescription = document.querySelector("#pdescription").value;
+    let phone = {"number": phoneNumber, "description": phoneDescription};
+    phones.push(phone);
+    document.querySelector("#pnumber").value = "";
+    document.querySelector("#pdescription").value = "";
+}
+
+function createPersonWithInformation() {
+    let firstname = document.querySelector("#fname").value;
+    let lastname = document.querySelector("#lname").value;
+    let email = document.querySelector("#email").value;
+    let personid = document.querySelector("#pid").value;
+    
+    let zipCode = document.querySelector("#zipcode");
+    let city = document.querySelector("#city");
+    let cityInfo = {"zipCode": zipCode, "city": city};
+    
+    let street = document.querySelector("#street").value;
+    let additionalInfo = document.querySelector("#additionalinfo").value;
+    let address = {"street": street, "additionalInfo": additionalInfo, "cityInfo": cityInfo};
+    
+    let person = {"personid": personid, "email": email, "firstName": firstname, "lastName": lastname, "phones": phones, "address": address, "hobbies": hobbies};
+    
+    console.log(person);
+    
+    let options = makeOptions('POST', person);
+    fetch('/ca2/api/person/create', options)
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                if (data.code === 400) {
+                    console.error('Fail:', data);
+                    document.getElementById("creation_Response").innerHTML = data.message;
+                } else if (data.code === 500) {
+                    document.getElementById("creation_Response").innerHTML = "<br><p>An error has occured, please try again at a later time.</p>";
+                } else {
+                    console.log('Success:', data);
+                    document.getElementById("creation_Response").innerHTML = firstname + " has been created";
+                }
+            });
+            
+            //resetting phones and hobbies arrays
+            phones = [];
+            hobbies = [];
+}
+
+/*---------------------------------------------*/
+/*--------- End CreatePersonWithInfo ----------*/
 /*---------------------------------------------*/
 
 /*---------------------------------------------*/
