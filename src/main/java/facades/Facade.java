@@ -204,6 +204,40 @@ public class Facade implements FacadeInterface {
             em.close();
         }
     }
+    
+    public PhoneDTO createPhone(PhoneDTO phone) throws AlreadyInOrderException {
+        EntityManager em = emf.createEntityManager();
+        Phone entphone = new Phone();
+        entphone.setNumber(phone.getNumber());
+        entphone.setDescription(phone.getDescription());
+        try {
+            em.getTransaction().begin();
+            em.persist(entphone);
+            em.getTransaction().commit();
+            return phone;
+        } catch (Exception ex) {
+            throw new AlreadyInOrderException("This phone is already created");
+        } finally {
+            em.close();
+        }
+    }
+    
+    public AddressDTO createAddress(AddressDTO address) throws AlreadyInOrderException {
+        EntityManager em = emf.createEntityManager();
+        Address entaddress = new Address();
+        entaddress.setStreet(address.getStreet());
+        entaddress.setAdditionalInfo(address.getAdditionalInfo());
+        try {
+            em.getTransaction().begin();
+            em.persist(entaddress);
+            em.getTransaction().commit();
+            return address;
+        } catch (Exception ex) {
+            throw new AlreadyInOrderException("This address is already created");
+        } finally {
+            em.close();
+        }
+    }
 
     public PersonDTO findPerson(long id) throws NotFoundException {
         EntityManager em = emf.createEntityManager();
@@ -222,14 +256,14 @@ public class Facade implements FacadeInterface {
         }
     }
 
-    public AddressDTO findAddress(AddressDTO address) throws NotFoundException {
+    public AddressDTO findAddress(String street) throws NotFoundException {
         EntityManager em = emf.createEntityManager();
         Address entaddress = null;
         try {
             em.getTransaction().begin();
             TypedQuery<Address> query = em.createQuery("SELECT a FROM Address a WHERE"
                     + " a.street = :address", Address.class)
-                    .setParameter("address", address.getStreet());
+                    .setParameter("address", street);
             em.getTransaction().commit();
             entaddress = query.getSingleResult();
             return new AddressDTO(entaddress);
@@ -240,14 +274,14 @@ public class Facade implements FacadeInterface {
         }
     }
 
-    public HobbyDTO findHobby(HobbyDTO hobby) throws NotFoundException {
+    public HobbyDTO findHobby(String hobby) throws NotFoundException {
         EntityManager em = emf.createEntityManager();
         Hobby enthobby = null;
         try {
             em.getTransaction().begin();
             TypedQuery<Hobby> query = em.createQuery("SELECT h FROM Hobby h WHERE"
                     + " h.name = :hobby", Hobby.class)
-                    .setParameter("hobby", hobby.getName());
+                    .setParameter("hobby", hobby);
             em.getTransaction().commit();
             enthobby = query.getSingleResult();
             return new HobbyDTO(enthobby);
@@ -258,14 +292,14 @@ public class Facade implements FacadeInterface {
         }
     }
 
-    public PhoneDTO findPhone(PhoneDTO phone) throws NotFoundException {
+    public PhoneDTO findPhone(int number) throws NotFoundException {
         EntityManager em = emf.createEntityManager();
         Phone entphone = null;
         try {
             em.getTransaction().begin();
             TypedQuery<Phone> query = em.createQuery("SELECT p FROM Phone p WHERE "
                     + " p.number = :number", Phone.class)
-                    .setParameter("number", phone.getNumber());
+                    .setParameter("number", number);
             em.getTransaction().commit();
             entphone = query.getSingleResult();
             return new PhoneDTO(entphone);
@@ -276,7 +310,7 @@ public class Facade implements FacadeInterface {
         }
     }
 
-    public void addHobby(HobbyDTO hobby) {
+    public HobbyDTO addHobby(HobbyDTO hobby) throws AlreadyInUseException {
         EntityManager em = emf.createEntityManager();
         Hobby enthobby = new Hobby();
         enthobby.setName(hobby.getName());
@@ -285,7 +319,11 @@ public class Facade implements FacadeInterface {
             em.getTransaction().begin();
             em.persist(enthobby);
             em.getTransaction().commit();
-        } finally {
+            return hobby;
+        } catch (Exception e) {
+             throw new AlreadyInUseException("This hobby is already created");
+        }
+            finally {
             em.close();
         }
     }
@@ -593,33 +631,5 @@ public class Facade implements FacadeInterface {
         }
     }
 
-//    public static void main(String[] args) throws NotFoundException, AlreadyInOrderException {
-//        emf = EMF_Creator.createEntityManagerFactory(EMF_Creator.DbSelector.TEST, EMF_Creator.Strategy.NONE);
-//        Facade facade = Facade.getFacade(emf);
-//        PersonDTO pdto = facade.addPhone(new PhoneDTO(7777, "added phone"), "Gurli", "Mogensen");
-//        //PersonDTO pdto = facade.editPersonPhone("Gurli", "Mogensen", 1234, 9999, "new phone");
-//        System.out.println(pdto.getPhones());
-//    }
-    public static void main(String[] args) throws AlreadyInUseException, NotFoundException, AlreadyInOrderException {
-        emf = EMF_Creator.createEntityManagerFactory(EMF_Creator.DbSelector.DEV, EMF_Creator.Strategy.CREATE);
-        Facade pf = new Facade();
-        PersonDTO person = new PersonDTO(new Person(3, "email2", "Asger", "Jansen"));
-        AddressDTO address = new AddressDTO(new Address("Testgade 4", "dejligt sted"));
-        CityInfoDTO cityInfo = new CityInfoDTO(3000, "Ny by");
-        //cityInfo.addAddress(address);
-        address.setCityInfo(cityInfo);
-        List<HobbyDTO> hobby = new ArrayList();
-        hobby.add(new HobbyDTO("Cykling", "Cykling på hold"));
-        hobby.add(new HobbyDTO("Svømning", "Crawl"));
-        List<PhoneDTO> phone = new ArrayList();
-        phone.add(new PhoneDTO(4444, "hjemmetelefon"));
-        phone.add(new PhoneDTO(5555, "mobil"));
-        person.setAddress(address);
-        person.setHobbies(hobby);
-        person.setPhones(phone);
-//        PersonDTO result = pf.createPersonWithInformations(person);
-//        Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-//        System.out.println(GSON.toJson(result));
-        System.out.println(pf.fillDB());
-    }
+
 }
