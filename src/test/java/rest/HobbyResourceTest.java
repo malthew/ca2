@@ -1,6 +1,5 @@
 package rest;
 
-import dtos.HobbyDTO;
 import dtos.PersonDTO;
 import dtos.PhoneDTO;
 import entities.Address;
@@ -139,7 +138,7 @@ public class HobbyResourceTest {
     public void testFindHobby() {
             given()
                 .contentType("application/json")
-                .get("/hobby/"+h1.getName()).then()
+                .get("/hobby/"+h1.getName()+"/"+h1.getDescription()).then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("name", equalTo("Cykling"))
@@ -155,26 +154,6 @@ public class HobbyResourceTest {
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("firstName", hasItems("Gurli"))
                 .body("lastName", hasItems("Mogensen"));
-    }
-    
-    @Test
-    public void testAddHobby() {
-
-        HobbyDTO hobbyToBeAdded = new HobbyDTO("Test", "new hobby");
-
-        HobbyDTO result
-                = with()
-                        .body(hobbyToBeAdded) //include object in body
-                        .contentType("application/json")
-                        .when().request("POST", "/hobby/createhobby").then() //post REQUEST
-                        .assertThat()
-                        .statusCode(HttpStatus.OK_200.getStatusCode())
-                        .extract()
-                        .as(HobbyDTO.class); //extract result JSON as object
-
-        //checking that nothing has changed that we don't want to change
-        assertThat((result.getName()), equalTo("Test"));
-        assertThat((result.getDescription()), equalTo("new hobby"));
     }
        
 }

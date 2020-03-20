@@ -121,29 +121,9 @@ addressButton.onclick = function (e) {
     createAddressButtons();
 };
 function createAddressButtons() {
-    let b1 = "<button type=\"submit\" onclick=\"createInputFieldsFindAddress()\">Find Address</button>";
-    let b2 = "<button type=\"submit\" onclick=\"createInputFieldsCreateAddress()\">Create Address</button>";
+    let b1 = "<button type=\"submit\" id=\"findAddress\">Find Address</button>";
+    let b2 = "<button type=\"submit\" id=\"createAddress\">Create Address</button>";
     linksDiv.innerHTML = b1 + b2;
-}
-
-function createInputFieldsFindAddress() {
-    let form = "<form><label for=\"aname\">Address street:</label><br>" +
-            "<input type=\"text\" id=\"aname\" name=\"aname\"><br>" +
-            "<button type=\"button\" onclick=\"findAddress()\" class=\"btn btn-primary\">Find Address</button>" +
-            "</form> ";
-    let response = "<p id=\"find_Response\"></p>";
-    linksDiv.innerHTML = form + response;
-}
-
-function createInputFieldsCreateAddress() {
-    let form = "<form><label for=\"astreet\">Address street:</label><br>" +
-            "<input type=\"text\" id=\"astreet\" name=\"astreet\"><br>" +
-            "<label for=\"aaddress\">Additional information:</label><br>" +
-            "<input type=\"text\" id=\"aaddress\" name=\"aaddress\"><br>" +
-            "<button type=\"button\" onclick=\"createAddress()\" class=\"btn btn-primary\">Create Address</button>" +
-            "</form> ";
-    let response = "<p id=\"creation_Response\"></p>";
-    linksDiv.innerHTML = form + response;
 }
 
 /*---------------------------------------------*/
@@ -160,8 +140,8 @@ hobbyButton.onclick = function (e) {
     createHobbyButtons();
 };
 function createHobbyButtons() {
-    let b1 = "<button type=\"submit\" onclick=\"createInputFieldsFindHobby()\">Find Hobby</button>";
-    let b2 = "<button type=\"submit\" onclick=\"createInputFieldsCreateHobby()\">Create Hobby</button>";
+    let b1 = "<button type=\"submit\" id=\"findHobby\">Find Hobby</button>";
+    let b2 = "<button type=\"submit\" id=\"createHobby\">Create Hobby</button>";
     let b3 = "<button type=\"submit\" onclick=\"createInputFieldsEditHobby()\">Edit Hobby</button>";
     linksDiv.innerHTML = b1 + b2 + b3;
 }
@@ -183,26 +163,6 @@ function createInputFieldsEditHobby() {
     linksDiv.innerHTML = form + response;
 }
 
-function createInputFieldsCreateHobby() {
-    let form = "<form><label for=\"hname\">Hobby name:</label><br>" +
-            "<input type=\"text\" id=\"hname\" name=\"hname\"><br>" +
-            "<label for=\"hdesc\">Hobby Description:</label><br>" +
-            "<input type=\"text\" id=\"hdesc\" name=\"hdesc\"><br>" +
-            "<button type=\"button\" onclick=\"createHobby()\" class=\"btn btn-primary\">Create Hobby</button>" +
-            "</form> ";
-    let response = "<p id=\"creation_Response\"></p>";
-    linksDiv.innerHTML = form + response;
-}
-
-function createInputFieldsFindHobby() {
-    let form = "<form><label for=\"hname\">Hobby name:</label><br>" +
-            "<input type=\"text\" id=\"hname\" name=\"hname\"><br>" +
-            "<button type=\"button\" onclick=\"findHobby()\" class=\"btn btn-primary\">Find Hobby</button>" +
-            "</form> ";
-    let response = "<p id=\"find_Response\"></p>";
-    linksDiv.innerHTML = form + response;
-}
-
 /*---------------------------------------------*/
 /*--------- End Create Button Hobby -----------*/
 /*---------------------------------------------*/
@@ -217,8 +177,8 @@ phoneButton.onclick = function (e) {
     createPhoneButtons();
 };
 function createPhoneButtons() {
-    let b1 = "<button type=\"submit\" onclick=\"createInputFieldsFindPhone()\">Find Phone</button>";
-    let b2 = "<button type=\"submit\" onclick=\"createInputFieldsCreatePhone()\">Create Phone</button>";
+    let b1 = "<button type=\"submit\" id=\"findPhone\">Find Phone</button>";
+    let b2 = "<button type=\"submit\" id=\"createPhone\">Create Phone</button>";
     let b3 = "<button type=\"submit\" onclick=\"createInputFieldsFindPhoneByName()\">Find Phones By Name</button>";
     let b4 = "<button type=\"submit\" onclick=\"createInputFieldsEditPhone()\">Edit Phone</button>";
     linksDiv.innerHTML = b1 + b2 + b3 + b4;
@@ -230,26 +190,6 @@ function createInputFieldsFindPhoneByName() {
             "<label for=\"lname\">Last name:</label><br>" +
             "<input type=\"text\" id=\"lname\" name=\"lname\"><br>" +
             "<button type=\"button\" onclick=\"findPhoneByName()\" class=\"btn btn-primary\">Find Phones</button>" +
-            "</form> ";
-    let response = "<p id=\"find_Response\"></p>";
-    linksDiv.innerHTML = form + response;
-}
-
-function createInputFieldsCreatePhone() {
-    let form = "<form><label for=\"pnumber\">Phone number:</label><br>" +
-            "<input type=\"number\" id=\"pnumber\" name=\"pnumber\"><br>" +
-            "<label for=\"pdesc\">Phone Description:</label><br>" +
-            "<input type=\"text\" id=\"pdesc\" name=\"pdesc\"><br>" +
-            "<button type=\"button\" onclick=\"createPhone()\" class=\"btn btn-primary\">Create Phone</button>" +
-            "</form> ";
-    let response = "<p id=\"creation_Response\"></p>";
-    linksDiv.innerHTML = form + response;
-}
-
-function createInputFieldsFindPhone() {
-    let form = "<form><label for=\"pnumber\">Phone number:</label><br>" +
-            "<input type=\"number\" id=\"pnumber\" name=\"pnumber\"><br>" +
-            "<button type=\"button\" onclick=\"findPhoneByNumber()\" class=\"btn btn-primary\">Find Phone</button>" +
             "</form> ";
     let response = "<p id=\"find_Response\"></p>";
     linksDiv.innerHTML = form + response;
@@ -359,45 +299,6 @@ function personTable(person) {
 /*---------------------------------------------*/
 
 /*---------------------------------------------*/
-/*--------------- Begin Add Phone -------------*/
-/*---------------------------------------------*/
-
-const createPhone = function () {
-    let pnumber = document.getElementById("pnumber").value;
-    let pdesc = document.getElementById("pdesc").value;
-    let newPhone = {"number": pnumber, "description": pdesc};
-
-    if (pnumber === "" && pdesc === "") {
-        document.getElementById("creation_Response").innerHTML = "<br><p>Please provide the information for the phone creation in the phone input fields.</p>";
-    } else if (pdesc === "") {
-        document.getElementById("creation_Response").innerHTML = "<br><p>Plase provide a phone desription in the input field.</p>";
-    } else if (pnumber === "") {
-        document.getElementById("creation_Response").innerHTML = "<br><p>Plase provide a phone number in the input field.</p>";
-    } else {
-    let options = makeOptions('POST', newPhone);
-    fetch('/ca2/api/phone/add', options)
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (data) {
-                if (data.code === 400) {
-                    console.error('Fail:', data);
-                    document.getElementById("creation_Response").innerHTML = data.msg;
-                } else if (data.code === 500) {
-                    document.getElementById("creation_Response").innerHTML = "<br><p>An error has occured, please try again at a later time.</p>";
-                } else {
-                    console.log('Success:', data);
-                    document.getElementById("creation_Response").innerHTML = pnumber + " has been created";
-                }
-            });
-        }
-};
-
-/*---------------------------------------------*/
-/*--------------- End Add Phone ---------------*/
-/*---------------------------------------------*/
-
-/*---------------------------------------------*/
 /*-------- Begin CreatePersonWithInfo ---------*/
 /*---------------------------------------------*/
 var phones = new Array();
@@ -464,78 +365,8 @@ function createPersonWithInformation() {
 /*---------------------------------------------*/
 
 /*---------------------------------------------*/
-/*----------- Begin Create Address ------------*/
-/*---------------------------------------------*/
-
-const createAddress = function () {
-    let astreet = document.getElementById("astreet").value;
-    let aaddress = document.getElementById("aaddress").value;
-    let newAddress = {"street": astreet, "additionalInfo": aaddress};
-
-    if (astreet === "" && aaddress === "") {
-        document.getElementById("creation_Response").innerHTML = "<br><p>Please provide the information for the address creation in the address input fields.</p>";
-    } else if (aaddress === "") {
-        document.getElementById("creation_Response").innerHTML = "<br><p>Plase provide additional desription in the input field.</p>";
-    } else if (astreet === "") {
-        document.getElementById("creation_Response").innerHTML = "<br><p>Plase provide a street in the input field.</p>";
-    } else {
-    let options = makeOptions('POST', newAddress);
-    fetch('/ca2/api/address/add', options)
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (data) {
-                if (data.code === 400) {
-                    console.error('Fail:', data);
-                    document.getElementById("creation_Response").innerHTML = data.msg;
-                } else if (data.code === 500) {
-                    document.getElementById("creation_Response").innerHTML = "<br><p>An error has occured, please try again at a later time.</p>";
-                } else {
-                    console.log('Success:', data);
-                    document.getElementById("creation_Response").innerHTML = "Address has been created";
-                }
-            });
-        }
-};
-
-/*---------------------------------------------*/
-/*------------ End Create Address -------------*/
-/*---------------------------------------------*/
-
-/*---------------------------------------------*/
 /*------------ Begin Find Address -------------*/
 /*---------------------------------------------*/
-
-const findAddress = function () {
-    let aname = document.getElementById("aname").value;
-    let url = "/ca2/api/address/" + aname;
-    if (aname === "") {
-        document.getElementById("find_Response").innerHTML = "<br><p>Please enter a address street in the input field.</p>";
-    } else {
-        fetch(url)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.code === 400) {
-                        document.getElementById("find_Response").innerHTML = "<br><p>No address was found with this street name</p>";
-                    } else if (data.code === 500) {
-                        document.getElementById("find_Response").innerHTML = "<br><p>An error has occured, please try again at a later time.</p>";
-                    } else {
-                        console.log("data", data);
-                        linksDiv.innerHTML = addressTable(data);
-                    }
-                });
-    }
-}
-
-function addressTable(address) {
-    var tableinfo = "<table id=\"indextable\" class=\"table\">" +
-            "<tr><th>Street</th>" +
-            "<th>Additional Info</th>" +
-            "</tr>" +
-            "<tr><td>" + address.street + "</td><td>" + address.additionalInfo + "</td><td>" + "</tr></table>";
-    return tableinfo;
-
-}
 
 
 /*---------------------------------------------*/
@@ -545,37 +376,6 @@ function addressTable(address) {
 /*---------------------------------------------*/
 /*------------- Begin Find Hobby --------------*/
 /*---------------------------------------------*/
-
-const findHobby = function () {
-    let hname = document.getElementById("hname").value;
-    let url = "/ca2/api/hobby/" + hname;
-    if (hname === "") {
-        document.getElementById("find_Response").innerHTML = "<br><p>Please enter a hobby name in the input field.</p>";
-    } else {
-        fetch(url)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.code === 400) {
-                        document.getElementById("find_Response").innerHTML = "<br><p>No hobby was found with this name</p>";
-                    } else if (data.code === 500) {
-                        document.getElementById("find_Response").innerHTML = "<br><p>An error has occured, please try again at a later time.</p>";
-                    } else {
-                        console.log("data", data);
-                        linksDiv.innerHTML = hobbyTable(data);
-                    }
-                });
-    }
-}
-
-function hobbyTable(hobby) {
-    var tableinfo = "<table id=\"indextable\" class=\"table\">" +
-            "<tr><th>Hobby name</th>" +
-            "<th>Description</th>" +
-            "</tr>" +
-            "<tr><td>" + hobby.name + "</td><td>" + hobby.description + "</td><td>" + "</tr></table>";
-    return tableinfo;
-
-}
 
 
 /*---------------------------------------------*/
@@ -621,39 +421,6 @@ function editHobby() {
 /*---------------------------------------------*/
 /*------------- Begin Find Phone --------------*/
 /*---------------------------------------------*/
-
-const findPhoneByNumber = function () {
-    let pnumber = document.getElementById("pnumber").value;
-    let url = "/ca2/api/phone/" + pnumber;
-    if (pnumber === "") {
-        document.getElementById("find_Response").innerHTML = "<br><p>Please enter a phone number in the input field.</p>";
-    } else {
-        fetch(url)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.code === 400) {
-                        document.getElementById("find_Response").innerHTML = "<br><p>No phone was found with this number</p>";
-                    } else if (data.code === 500) {
-                        document.getElementById("find_Response").innerHTML = "<br><p>An error has occured, please try again at a later time.</p>";
-                    } else {
-                        console.log("data", data);
-                        linksDiv.innerHTML = phoneTable(data);
-                    }
-                });
-    }
-}
-
-function phoneTable(phone) {
-    var tableinfo = "<table id=\"indextable\" class=\"table\">" +
-            "<tr><th>Phone Number</th>" +
-            "<th>Description</th>" +
-            "<th>First Name</th>" +
-            "<th>Last Name</th></tr>" +
-            "<tr><td>" + phone.number + "</td><td>" + phone.description + "</td><td>" + phone.person.firstName + "</td>" +
-            "<td>" + phone.person.lastName + "</tr></table>";
-    return tableinfo;
-
-}
 
 
 /*---------------------------------------------*/
@@ -741,37 +508,6 @@ function editPhone() {
 /*-------------- Begin Add Hobby --------------*/
 /*---------------------------------------------*/
 
-const createHobby = function () {
-    let hname = document.getElementById("hname").value;
-    let hdesc = document.getElementById("hdesc").value;
-    let newHobby = {"name": hname, "description": hdesc};
-
-    if (hdesc === "" && hname === "") {
-        document.getElementById("creation_Response").innerHTML = "<br><p>Please provide the information for the hobby creation in the hobby input fields.</p>";
-    } else if (hdesc === "") {
-        document.getElementById("creation_Response").innerHTML = "<br><p>Plase provide a hobby desription in the input field.</p>";
-    } else if (hname === "") {
-        document.getElementById("creation_Response").innerHTML = "<br><p>Plase provide a hobby name in the input field.</p>";
-    } else {
-    let options = makeOptions('POST', newHobby);
-    fetch('/ca2/api/hobby/createhobby', options)
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (data) {
-                if (data.code === 400) {
-                    console.error('Fail:', data);
-                    document.getElementById("creation_Response").innerHTML = data.msg;
-                } else if (data.code === 500) {
-                    document.getElementById("creation_Response").innerHTML = "<br><p>An error has occured, please try again at a later time.</p>";
-                } else {
-                    console.log('Success:', data);
-                    document.getElementById("creation_Response").innerHTML = hname + " has been created";
-                }
-            });
-        }
-};
-
 
 /*---------------------------------------------*/
 /*--------------- End Add Hobby ---------------*/
@@ -786,6 +522,17 @@ const createHobby = function () {
 /*---------------------------------------------*/
 /*---------------- End Add City ---------------*/
 /*---------------------------------------------*/
+
+
+/*---------------------------------------------*/
+/*------------- Begin Get ZipCodes ------------*/
+/*---------------------------------------------*/
+
+
+/*---------------------------------------------*/
+/*-------------- End Get ZipCodes -------------*/
+/*---------------------------------------------*/
+
 
 
 /*---------------------------------------------*/
