@@ -631,33 +631,5 @@ public class Facade implements FacadeInterface {
         }
     }
 
-//    public static void main(String[] args) throws NotFoundException, AlreadyInOrderException {
-//        emf = EMF_Creator.createEntityManagerFactory(EMF_Creator.DbSelector.TEST, EMF_Creator.Strategy.NONE);
-//        Facade facade = Facade.getFacade(emf);
-//        PersonDTO pdto = facade.addPhone(new PhoneDTO(7777, "added phone"), "Gurli", "Mogensen");
-//        //PersonDTO pdto = facade.editPersonPhone("Gurli", "Mogensen", 1234, 9999, "new phone");
-//        System.out.println(pdto.getPhones());
-//    }
-    public static void main(String[] args) throws AlreadyInUseException, NotFoundException, AlreadyInOrderException {
-        emf = EMF_Creator.createEntityManagerFactory(EMF_Creator.DbSelector.DEV, EMF_Creator.Strategy.CREATE);
-        Facade pf = new Facade();
-        PersonDTO person = new PersonDTO(new Person(3, "email2", "Asger", "Jansen"));
-        AddressDTO address = new AddressDTO(new Address("Testgade 4", "dejligt sted"));
-        CityInfoDTO cityInfo = new CityInfoDTO(3000, "Ny by");
-        //cityInfo.addAddress(address);
-        address.setCityInfo(cityInfo);
-        List<HobbyDTO> hobby = new ArrayList();
-        hobby.add(new HobbyDTO("Cykling", "Cykling på hold"));
-        hobby.add(new HobbyDTO("Svømning", "Crawl"));
-        List<PhoneDTO> phone = new ArrayList();
-        phone.add(new PhoneDTO(4444, "hjemmetelefon"));
-        phone.add(new PhoneDTO(5555, "mobil"));
-        person.setAddress(address);
-        person.setHobbies(hobby);
-        person.setPhones(phone);
-//        PersonDTO result = pf.createPersonWithInformations(person);
-//        Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-//        System.out.println(GSON.toJson(result));
-        System.out.println(pf.fillDB());
-    }
+
 }
