@@ -375,10 +375,11 @@ public class Facade implements FacadeInterface {
 
             Person p1 = new Person(1, "email", "Gurli", "Mogensen");
             Person p2 = new Person(2, "mail", "Gunnar", "Hjorth");
+            Person p4 = new Person(4, "gmail", "Georg", "Mogensen");
 
             Hobby h1 = new Hobby("Cykling", "Cykling på hold");
             Hobby h2 = new Hobby("Film", "Gyserfilm");
-            Hobby h3 = new Hobby("Film", "Dramafilm");
+            Hobby h3 = new Hobby("Hockey", "Indendørs hockey");
 
             Address a1 = new Address("Testgade", "dejligt sted");
             Address a2 = new Address("Testvej", "fint sted");
@@ -390,12 +391,16 @@ public class Facade implements FacadeInterface {
             //adding address to CityInfo
             c1.addAddress(a1);
             c2.addAddress(a2);
+            //adding cityInfo to address
+            a1.setCityInfo(c1);
+            a2.setCityInfo(c2);
             //Persisting CityInfo
             em.persist(c1);
             em.persist(c2);
             //adding address to persons
             p1.setAddress(a1);
             p2.setAddress(a2);
+            p4.setAddress(a1);
             //setting persons to phones
             phone1.setPerson(p1);
             phone2.setPerson(p1);
@@ -411,6 +416,7 @@ public class Facade implements FacadeInterface {
             //persisting persons
             em.persist(p1);
             em.persist(p2);
+            em.persist(p4);
             em.getTransaction().commit();
 
             return "{\"status\":\"filled\"}";
@@ -595,7 +601,7 @@ public class Facade implements FacadeInterface {
 //        System.out.println(pdto.getPhones());
 //    }
     public static void main(String[] args) throws AlreadyInUseException, NotFoundException, AlreadyInOrderException {
-        emf = EMF_Creator.createEntityManagerFactory(EMF_Creator.DbSelector.TEST, EMF_Creator.Strategy.CREATE);
+        emf = EMF_Creator.createEntityManagerFactory(EMF_Creator.DbSelector.DEV, EMF_Creator.Strategy.CREATE);
         Facade pf = new Facade();
         PersonDTO person = new PersonDTO(new Person(3, "email2", "Asger", "Jansen"));
         AddressDTO address = new AddressDTO(new Address("Testgade 4", "dejligt sted"));
@@ -614,6 +620,6 @@ public class Facade implements FacadeInterface {
 //        PersonDTO result = pf.createPersonWithInformations(person);
 //        Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 //        System.out.println(GSON.toJson(result));
-        System.out.println(pf.editPersonHobby("Gurli", "Mogensen", "Cykling", "Hockey", "lige meget"));
+        System.out.println(pf.fillDB());
     }
 }
