@@ -56,5 +56,17 @@ public class AddressResource {
         }
         
     }
+    
+    @POST
+    @Path("/add")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public String createAddress(AddressDTO address) {
+        try {
+            return GSON.toJson(FACADE.createAddress(address));
+        } catch (AlreadyInOrderException ex) {
+            throw new WebApplicationException(ex.getMessage(), 400);
+        }
+    }
 
 }

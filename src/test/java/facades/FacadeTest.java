@@ -181,7 +181,7 @@ public class FacadeTest {
     }
     
     @Test
-    public void testAddHobby()  {
+    public void testAddHobby() throws AlreadyInUseException  {
         assertEquals(0, facade.countFromHobby("Fodbold"));
         facade.addHobby(new HobbyDTO("Fodbold", "Amatør fodbold"));
         assertEquals(1, facade.countFromHobby("Fodbold"));
@@ -358,6 +358,44 @@ public class FacadeTest {
         fail("expected AlreadyInUseException to be thrown");
         }catch(AlreadyInUseException ex) {
             assertThat(ex.getMessage(), is("One of the phone numbers are already in use."));
+        }
+    }
+    
+    @Test
+    public void testCreatePhone() throws AlreadyInOrderException {
+        PhoneDTO phonedto = new PhoneDTO(8888, "added phone");
+        PhoneDTO pDTO = facade.createPhone(phonedto);
+        assertThat(pDTO, is (phonedto));
+    }
+    
+    @Test
+    public void testCreatePhoneFail() throws AlreadyInOrderException {
+        PhoneDTO phonedto = new PhoneDTO(8888, "added phone");
+        PhoneDTO pDTO = facade.createPhone(phonedto);
+        try {
+        PhoneDTO newphonedto = facade.createPhone(phonedto);
+        fail("expected AlreadyInUseException to be thrown");
+        }catch(AlreadyInOrderException ex) {
+            assertThat(ex.getMessage(), is("This phone is already created"));
+        }
+    }
+    
+    @Test
+    public void testCreateAddress() throws AlreadyInOrderException {
+        AddressDTO addressdto = new AddressDTO("Testvej2", "testdesc");
+        AddressDTO aDTO = facade.createAddress(addressdto);
+        assertThat(aDTO, is (addressdto));
+    }
+    
+    @Test
+    public void testCreateAddressFail() throws AlreadyInOrderException {
+        AddressDTO addressdto = new AddressDTO("Testvej2", "testdesc");
+        AddressDTO aDTO = facade.createAddress(addressdto);
+        try {
+        AddressDTO newaddressdto = facade.createAddress(addressdto);
+        fail("expected AlreadyInUseException to be thrown");
+        }catch(AlreadyInOrderException ex) {
+            assertThat(ex.getMessage(), is("This address is already created"));
         }
     }
 

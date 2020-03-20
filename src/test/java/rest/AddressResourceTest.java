@@ -1,5 +1,6 @@
 package rest;
 
+import dtos.AddressDTO;
 import dtos.PersonDTO;
 import dtos.PhoneDTO;
 import entities.Address;
@@ -154,6 +155,26 @@ public class AddressResourceTest {
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("firstName", hasItems("Gurli"))
                 .body("lastName", hasItems("Mogensen"));
+    }
+    
+    @Test
+    public void testAddAddress() {
+
+        AddressDTO addressToBeAdded = new AddressDTO("Test", "new address");
+
+        AddressDTO result
+                = with()
+                        .body(addressToBeAdded) //include object in body
+                        .contentType("application/json")
+                        .when().request("POST", "/address/add").then() //post REQUEST
+                        .assertThat()
+                        .statusCode(HttpStatus.OK_200.getStatusCode())
+                        .extract()
+                        .as(AddressDTO.class); //extract result JSON as object
+
+        //checking that nothing has changed that we don't want to change
+        assertThat((result.getStreet()), equalTo("Test"));
+        assertThat((result.getAdditionalInfo()), equalTo("new address"));
     }
        
 }

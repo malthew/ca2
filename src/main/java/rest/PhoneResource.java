@@ -42,4 +42,16 @@ public class PhoneResource {
             throw new WebApplicationException(ex.getMessage(), 400);
         }
     }
+    
+    @POST
+    @Path("/add")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public String createPhone(PhoneDTO phone) {
+        try {
+            return GSON.toJson(FACADE.createPhone(phone));
+        } catch (AlreadyInOrderException ex) {
+            throw new WebApplicationException(ex.getMessage(), 400);
+        }
+    }
 }

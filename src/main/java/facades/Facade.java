@@ -204,6 +204,40 @@ public class Facade implements FacadeInterface {
             em.close();
         }
     }
+    
+    public PhoneDTO createPhone(PhoneDTO phone) throws AlreadyInOrderException {
+        EntityManager em = emf.createEntityManager();
+        Phone entphone = new Phone();
+        entphone.setNumber(phone.getNumber());
+        entphone.setDescription(phone.getDescription());
+        try {
+            em.getTransaction().begin();
+            em.persist(entphone);
+            em.getTransaction().commit();
+            return phone;
+        } catch (Exception ex) {
+            throw new AlreadyInOrderException("This phone is already created");
+        } finally {
+            em.close();
+        }
+    }
+    
+    public AddressDTO createAddress(AddressDTO address) throws AlreadyInOrderException {
+        EntityManager em = emf.createEntityManager();
+        Address entaddress = new Address();
+        entaddress.setStreet(address.getStreet());
+        entaddress.setAdditionalInfo(address.getAdditionalInfo());
+        try {
+            em.getTransaction().begin();
+            em.persist(entaddress);
+            em.getTransaction().commit();
+            return address;
+        } catch (Exception ex) {
+            throw new AlreadyInOrderException("This address is already created");
+        } finally {
+            em.close();
+        }
+    }
 
     public PersonDTO findPerson(long id) throws NotFoundException {
         EntityManager em = emf.createEntityManager();
@@ -276,7 +310,7 @@ public class Facade implements FacadeInterface {
         }
     }
 
-    public void addHobby(HobbyDTO hobby) {
+    public HobbyDTO addHobby(HobbyDTO hobby) throws AlreadyInUseException {
         EntityManager em = emf.createEntityManager();
         Hobby enthobby = new Hobby();
         enthobby.setName(hobby.getName());
@@ -285,7 +319,11 @@ public class Facade implements FacadeInterface {
             em.getTransaction().begin();
             em.persist(enthobby);
             em.getTransaction().commit();
-        } finally {
+            return hobby;
+        } catch (Exception e) {
+             throw new AlreadyInUseException("This hobby is already created");
+        }
+            finally {
             em.close();
         }
     }

@@ -144,5 +144,25 @@ public class PhoneResourceTest {
                 .body("number", equalTo(1234))
                 .body("description", equalTo("hjemmetelefon"));
     }
+    
+    @Test
+    public void testAddPhone() {
+
+        PhoneDTO phoneToBeAdded = new PhoneDTO(666, "new phone");
+
+        PhoneDTO result
+                = with()
+                        .body(phoneToBeAdded) //include object in body
+                        .contentType("application/json")
+                        .when().request("POST", "/phone/add").then() //post REQUEST
+                        .assertThat()
+                        .statusCode(HttpStatus.OK_200.getStatusCode())
+                        .extract()
+                        .as(PhoneDTO.class); //extract result JSON as object
+
+        //checking that nothing has changed that we don't want to change
+        assertThat((result.getNumber()), equalTo(666));
+        assertThat((result.getDescription()), equalTo("new phone"));
+    }
        
 }
