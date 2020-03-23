@@ -123,7 +123,8 @@ addressButton.onclick = function (e) {
 function createAddressButtons() {
     let b1 = "<button type=\"submit\" onclick=\"createInputFieldsFindAddress()\">Find Address</button>";
     let b2 = "<button type=\"submit\" onclick=\"createInputFieldsCreateAddress()\">Create Address</button>";
-    linksDiv.innerHTML = b1 + b2;
+    let b3 = "<button type=\"submit\" onclick=\"createInputFieldsGetAllPersonsWithZip()\">Find People with Zip Code</button>";
+    linksDiv.innerHTML = b1 + b2 + b3;
 }
 
 function createInputFieldsFindAddress() {
@@ -146,6 +147,15 @@ function createInputFieldsCreateAddress() {
     linksDiv.innerHTML = form + response;
 }
 
+function createInputFieldsGetAllPersonsWithZip() {
+    let form = "<form><label for=\"zcode\">Zip Code:</label><br>" +
+            "<input type=\"number\" id=\"zcode\" name=\"zcode\"><br>" +
+            "<button type=\"button\" onclick=\"getAllPersonsWithZip()\" class=\"btn btn-primary\">Find People</button>" +
+            "</form> ";
+    let response = "<p id=\"zip_Response\"></p>";
+    linksDiv.innerHTML = form + response;
+}
+
 /*---------------------------------------------*/
 /*-------- End Create Button Address ----------*/
 /*---------------------------------------------*/
@@ -163,7 +173,8 @@ function createHobbyButtons() {
     let b1 = "<button type=\"submit\" onclick=\"createInputFieldsFindHobby()\">Find Hobby</button>";
     let b2 = "<button type=\"submit\" onclick=\"createInputFieldsCreateHobby()\">Create Hobby</button>";
     let b3 = "<button type=\"submit\" onclick=\"createInputFieldsEditHobby()\">Edit Hobby</button>";
-    linksDiv.innerHTML = b1 + b2 + b3;
+    let b4 = "<button type=\"submit\" onclick=\"createInputFieldsGetAllPersonsWithHobby()\">Find People with Hobby</button>";
+    linksDiv.innerHTML = b1 + b2 + b3 + b4;
 }
 
 function createInputFieldsEditHobby() {
@@ -200,6 +211,15 @@ function createInputFieldsFindHobby() {
             "<button type=\"button\" onclick=\"findHobby()\" class=\"btn btn-primary\">Find Hobby</button>" +
             "</form> ";
     let response = "<p id=\"find_Response\"></p>";
+    linksDiv.innerHTML = form + response;
+}
+
+function createInputFieldsGetAllPersonsWithHobby() {
+    let form = "<form><label for=\"hobname\">Name of Hobby:</label><br>" +
+            "<input type=\"text\" id=\"hobname\" name=\"hobname\"><br>" +
+            "<button type=\"button\" onclick=\"getAllPersonsWithHobby()\" class=\"btn btn-primary\">Find People</button>" +
+            "</form> ";
+    let response = "<p id=\"hobby_Response\"></p>";
     linksDiv.innerHTML = form + response;
 }
 
@@ -543,6 +563,43 @@ function addressTable(address) {
 /*---------------------------------------------*/
 
 /*---------------------------------------------*/
+/*------- Begin Get All Persons w/ Zip --------*/
+/*---------------------------------------------*/
+
+const getAllPersonsWithZip = function () {
+    let zipCode = document.getElementById("zcode").value;
+    let url = "/ca2/api/address/persons/" + zipCode;
+    if (zipCode === "") {
+        document.getElementById("zip_Response").innerHTML = "<br><p>Please enter a Zip Code in the input field.</p>";
+    } else {
+        fetch(url)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.code === 400) {
+                        document.getElementById("zip_Response").innerHTML = "<br><p>No person was found with this Zip Code</p>";
+                    } else if (data.code === 500) {
+                        document.getElementById("zip_Response").innerHTML = "<br><p>An error has occured, please try again at a later time.</p>";
+                    } else {
+                        console.log("data", data);
+                        linksDiv.innerHTML = personsTable(data);
+                    }
+                });
+    }
+};
+
+function personsTable(persons) {
+      let tableInfo = persons.map(persons => `<tr><td>${persons.personid}</td><td>${persons.email}</td><td>${persons.firstName}</td><td>${persons.lastName}</td></tr>`);
+      tableInfo.unshift("<table id=\"indextable\" class=\"table\"><tr><th>Person ID</th><th>Email</th><th>First Name</th><th>Last Name</th></tr>");
+      tableInfo.push("</table>");
+    return tableInfo.join('');
+
+}
+
+/*---------------------------------------------*/
+/*--------- End Get All Persons w/ Zip --------*/
+/*---------------------------------------------*/
+
+/*---------------------------------------------*/
 /*------------- Begin Find Hobby --------------*/
 /*---------------------------------------------*/
 
@@ -616,6 +673,50 @@ function editHobby() {
 
 /*---------------------------------------------*/
 /*-------------- End Edit Hobby ---------------*/
+/*---------------------------------------------*/
+
+/*---------------------------------------------*/
+/*------ Begin Get All Persons w/ Hobby -------*/
+/*---------------------------------------------*/
+
+const getAllPersonsWithHobby = function () {
+    let hobbyName = document.getElementById("hobname").value;
+    let url = "/ca2/api/hobby/persons/" + hobbyName;
+    if (hobbyName === "") {
+        document.getElementById("hobby_Response").innerHTML = "<br><p>Please enter the name of a hobby in the input field.</p>";
+    } else {
+        fetch(url)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.code === 400) {
+                        document.getElementById("hobby_Response").innerHTML = "<br><p>No person was found with this hobby name</p>";
+                    } else if (data.code === 500) {
+                        document.getElementById("hobby_Response").innerHTML = "<br><p>An error has occured, please try again at a later time.</p>";
+                    } else {
+                        console.log("data", data);
+                        linksDiv.innerHTML = persons2Table(data);
+                    }
+                });
+    }
+};
+
+function persons2Table(persons) {
+      let tableInfo = persons.map(persons => `<tr><td>${persons.personid}</td><td>${persons.email}</td><td>${persons.firstName}</td><td>${persons.lastName}</td></tr>`);
+      tableInfo.unshift("<table id=\"indextable\" class=\"table\"><tr><th>Person ID</th><th>Email</th><th>First Name</th><th>Last Name</th></tr>");
+      tableInfo.push("</table>");
+//        var tableInfo = "<table id=\"indextable\" class=\"table\">" +
+//            "<tr><th>Person ID</th>" +
+//            "<th>Email</th>" +
+//            "<th>First Name</th>" +
+//            "<th>Last Name</th></tr>" +
+//            "<tr><td>" + persons.personid + "</td><td>" + persons.email + "</td><td>" + persons.firstName + "</td>" +
+//            "<td>" + persons.lastName + "</tr></table>";
+    return tableInfo.join('');
+
+}
+
+/*---------------------------------------------*/
+/*------- End Get All Persons w/ Hobby --------*/
 /*---------------------------------------------*/
 
 /*---------------------------------------------*/
